@@ -1,11 +1,18 @@
 import { createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
-import logger from 'redux-logger'
+
 import rootReduce from './reducers'
 
+const logger = createLogger({
+  collapsed: true,
+  diff: true,
+})
+
 const middleware = [thunk]
-if (process.env.NODE_ENV !== 'production') {
+
+if (process.env.REACT_APP_ENV !== 'production') {
   middleware.push(logger)
 }
 
