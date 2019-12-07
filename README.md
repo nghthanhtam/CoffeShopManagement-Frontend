@@ -1,1 +1,1 @@
-Add detail please 1
+Add detail please
