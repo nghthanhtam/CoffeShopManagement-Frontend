@@ -1,44 +1,48 @@
-import React, { Component, Fragment } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import Menu from './components/Menu'
-import Category from './components/Content/Category/Category'
-import CategoryEdit from './components/Content/Category/CategoryEdit'
-import Supplier from './components/Content/Supplier/Supplier'
-import SupplierEdit from './components/Content/Supplier/SupplierEdit'
-import ErrorPage from './components/Content/ErrorPage/ErrorPage'
-import Login from './components/Content/Auth/Login'
-import Home from './components/Content/Home/Home'
-import { loadUser } from './actions/authActions'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import Loader from 'react-loader'
-import { Route, Switch, Redirect } from 'react-router-dom'
-import Role from './components/Content/Role/Role'
-import RoleEdit from './components/Content/Role/RoleEdit'
+import React, { Component, Fragment } from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Menu from "./components/Menu";
+import Category from "./components/Content/Category/Category";
+import CategoryEdit from "./components/Content/Category/CategoryEdit";
+import Supplier from "./components/Content/Supplier/Supplier";
+import SupplierEdit from "./components/Content/Supplier/SupplierEdit";
+import ErrorPage from "./components/Content/ErrorPage/ErrorPage";
+import Login from "./components/Content/Auth/Login";
+import Home from "./components/Content/Home/Home";
+import { loadUser } from "./actions/authActions";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import Loader from "react-loader";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Role from "./components/Content/Role/Role";
+import RoleEdit from "./components/Content/Role/RoleEdit";
+import Material from "./components/Content/Material/Material";
+import MaterialEdit from "./components/Content/Material/MaterialEdit";
+import User from "./components/Content/User/User";
+import UserEdit from "./components/Content/User/UserEdit";
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.auth.isLoading,
   history: state.history,
   isLoaded: state.auth.isLoaded,
-  user: state.auth.user,
-})
+  user: state.auth.user
+});
 
 class CoffeShop extends Component {
   state = {
-    firstPathname: '/',
-  }
+    firstPathname: "/"
+  };
   componentDidMount() {
     this.setState({
-      firstPathname: this.props.history.history.location.pathname,
-    })
-    this.props.loadUser()
+      firstPathname: this.props.history.history.location.pathname
+    });
+    this.props.loadUser();
   }
 
   onChange = e => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
+    this.setState({ [e.target.name]: e.target.value });
+  };
   render() {
     return (
       <Fragment>
@@ -54,7 +58,7 @@ class CoffeShop extends Component {
                   <Redirect to="/login" />
                 ) : (
                   <Redirect to="/home" />
-                )
+                );
               }}
             />
 
@@ -66,7 +70,7 @@ class CoffeShop extends Component {
                   <Login />
                 ) : (
                   <Redirect to="/home" />
-                )
+                );
               }}
             />
             {this.props.isAuthenticated && (
@@ -98,12 +102,14 @@ class CoffeShop extends Component {
                       path="/category/edit/:id"
                       component={CategoryEdit}
                     ></Route>
-                    <Route exact path="/supplier" component={Supplier}></Route>
+                    <Route exact path="/material" component={Material}></Route>
                     <Route
                       exact
-                      path="/supplier/edit/:id"
-                      component={SupplierEdit}
+                      path="/material/edit/:id"
+                      component={MaterialEdit}
                     />
+                    <Route exact path="/user" component={User}></Route>
+                    <Route exact path="/user/edit/:id" component={UserEdit} />
                     <Route path="*" render={() => <Redirect to="/404" />} />
                   </Switch>
                 </div>
@@ -114,7 +120,7 @@ class CoffeShop extends Component {
           </Switch>
         )}
       </Fragment>
-    )
+    );
   }
 }
 
@@ -122,7 +128,7 @@ Category.propTypes = {
   isAuthenticated: PropTypes.bool,
   isLoading: PropTypes.bool,
   isLoaded: PropTypes.bool,
-  user: PropTypes.object,
-}
+  user: PropTypes.object
+};
 
-export default connect(mapStateToProps, { loadUser })(CoffeShop)
+export default connect(mapStateToProps, { loadUser })(CoffeShop);
