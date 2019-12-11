@@ -1,14 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import {
-    getSearchMembers,
-    deleteMember
-} from "../../../actions/memberActions";
+import { deleteMember } from "../../../actions/memberActions";
+import { updateQtyMaterial, getAllMaterials } from "../../../actions/materialActions"
 import { addStorageReport } from "../../../actions/storageReportActions"
 import PropTypes from "prop-types";
 import axios from "axios";
 import Loader from "react-loader";
-import Select from 'react-select';
+import Select from "react-select";
 
 const mongoose = require("mongoose");
 
@@ -39,15 +37,18 @@ class DailyCheck extends Component {
     };
 
     addRow = () => {
-
         let options = [...this.state.options]
         this.setState(state => {
-            if (this.props.member.members.length === this.state.options.length) return;
+            // if (this.props.member.members.length === this.state.options.length) return;
+            // else options = [];
+            // this.props.member.members.map(el => {
+            //     options.push({ 'value': el._id, 'label': el.name, 'quantityIndb': el.point })
+            // });
+            if (this.props.material.materials.length === this.state.options.length) return;
             else options = [];
-            this.props.member.members.map(el => {
-                options.push({ 'value': el._id, 'label': el.name, 'quantityIndb': el.point })
+            this.props.material.materials.map(el => {
+                options.push({ 'value': el._id, 'label': el.name, 'quantityIndb': el.quantity })
             });
-
             return {
                 //...state.options,
                 options
@@ -77,21 +78,26 @@ class DailyCheck extends Component {
             //     .catch(error => {
             //         console.log(error.response);
             //     });
+            const newMaterial = {
+                _id: el.materialId,
+                quantity: el.quantity
+            }
+            this.props.updateQtyMaterial(newMaterial);
 
             const newItem = {
                 _id: mongoose.Types.ObjectId(),
-                idMember: 'abc',
-                idMaterial: 'abc',
+                idMember: 'tam test',
+                idMaterial: el.materialId,
                 createddate: new Date(),
-                quantity: 30
+                quantity: el.quantity
             };
             this.props.addStorageReport(newItem);
         });
     });
 
     componentDidMount() {
-        const { } = this.state;
-        this.props.getSearchMembers('');
+        this.props.getAllMaterials('');
+        //this.props.getSearchMembers('');
     }
 
     getTotalDocuments = () => {
@@ -114,7 +120,6 @@ class DailyCheck extends Component {
 
     getPages = () => {
         const { select, query } = this.state;
-        console.log(query);
         let newQuery = "";
         if (query === "") newQuery = "undefined";
         else newQuery = query;
@@ -138,7 +143,7 @@ class DailyCheck extends Component {
             });
     };
 
-    onSelect = (selectedMaterial, index) => {
+    onSelect = (index, selectedMaterial) => {
         //selectedMaterial.quantity
         //selectedMaterial.value - _id
         //selectedMaterial.label - name
@@ -148,9 +153,11 @@ class DailyCheck extends Component {
 
             rows.map(el => {
                 if (el._id === index + 1) {
-                    const newItem = { _id: index, MaterialId: selectedMaterial.value, quantity: 0, quantitydb: selectedMaterial.quantityIndb, usedqty: 0, options: this.state.options, createAt: new Date() };
+                    const newItem = { _id: el._id, materialId: selectedMaterial.value, quantity: 0, quantitydb: selectedMaterial.quantityIndb, usedqty: 0, options: this.state.options, createAt: new Date() };
                     rows.splice(index, 1); //xoa 1 phan tu o vi tri index
-                    rows.splice(index, 0, newItem); //chen newItem vao vi tri thu index
+                    rows.splice(index, 0, newItem); //chen newItem vao vi tri thu index   
+
+                    return false;
                 }
             });
 
@@ -160,14 +167,15 @@ class DailyCheck extends Component {
         });
 
     };
-    handleOnChange = e => {
-        this.setState({ [e.target.name]: e.target.value }, () => {
-            const { select, currentPage, query } = this.state;
-            this.props.getMembers(select, currentPage, query);
-            this.getPages();
-            this.getTotalDocuments();
-        });
-    };
+
+    // handleOnChange = e => {
+    //     this.setState({ [e.target.name]: e.target.value }, () => {
+    //         const { select, currentPage, query } = this.state;
+    //         this.props.getMembers(select, currentPage, query);
+    //         this.getPages();
+    //         this.getTotalDocuments();
+    //     });
+    // };
 
     handleChoosePage = e => {
         this.setState({ currentPage: e }, () => {
@@ -176,44 +184,28 @@ class DailyCheck extends Component {
         });
     };
 
-    renderPageButtons = (event) => {
-        const { pages, currentPage } = this.state;
-
-        return pages.map(eachButton => (
-            <li
-                key={eachButton.pageNumber}
-                className={
-                    currentPage === eachButton.pageNumber
-                        ? "paginae_button active"
-                        : "paginate_button "
-                }
-            >
-                <a
-                    name="currentPage"
-                    onClick={() => this.handleChoosePage(eachButton.pageNumber)}
-                    aria-controls="example1"
-                    data-dt-idx={eachButton.pageNumber}
-                    tabIndex={0}
-                >
-                    {eachButton.pageNumber}
-                </a>
-            </li>
-        ));
-    };
 
     handleClick = (e, index) => {
+
         const val = e.target.textContent;
         this.setState(state => {
             let rows = [...state.rows];
 
             rows.map(el => {
                 if (el._id == index + 1) {
-                    const newItem = { _id: el._id, quantity: el.quantityIndb - val, quantitydb: el.quantityIndb, usedqty: val, options: this.state.options, createAt: new Date() };
+                    //const newItem = { _id: index, materialId: selectedMaterial.value, quantity: 0, quantitydb: selectedMaterial.quantityIndb, usedqty: 0, options: this.state.options, createAt: new Date() };
+                    //const newItem = { _id: el._id, materialId:el.materialId, quantity: el.quantityIndb - val, quantitydb: el.quantitydb, usedqty: val, options: this.state.options, createAt: new Date() };
+                    const newItem = Object.assign(el);
+                    newItem["quantity"] = el.quantitydb - val;
+                    newItem["usedqty"] = val;
+                    newItem["options"] = this.state.options;
+                    newItem["createAt"] = new Date();
+
                     rows.splice(index, 1); //xoa 1 phan tu o vi tri index
                     rows.splice(index, 0, newItem); //chen newItem vao vi tri thu index
-
                 }
             });
+
             return {
                 rows
             }
@@ -221,8 +213,7 @@ class DailyCheck extends Component {
     };
 
     render() {
-        const { members } = this.props.member;
-        const { select, totalDocuments, pages, options } = this.state;
+        const { options } = this.state;
         const { isLoaded } = this.props;
 
         return (
@@ -234,17 +225,17 @@ class DailyCheck extends Component {
                             {/* Content Header (Page header) */}
                             <section className="content-header">
                                 <h1>
-                                    Member
-            {/* <small>Preview</small> */}
+                                    Storage Report
+                                {/* <small>Preview</small> */}
                                 </h1>
                                 <ol className="breadcrumb">
                                     <li>
                                         <a href="fake_url">
                                             <i className="fa fa-dashboard" /> Home
-              </a>
+                                        </a>
                                     </li>
                                     <li>
-                                        <a href="fake_url">Member</a>
+                                        <a href="fake_url">Storage Report</a>
                                     </li>
                                 </ol>
                             </section>
@@ -283,7 +274,7 @@ class DailyCheck extends Component {
                                                                         onClick={this.addRow}
                                                                     >
                                                                         + Add
-                                  </button>
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                             <div className="col-sm-6">
@@ -293,7 +284,7 @@ class DailyCheck extends Component {
                                                                 >
                                                                     <label style={{ float: "right" }}>
                                                                         Search:
-                              <input
+                                                                        <input
                                                                             type="search"
                                                                             name="query"
                                                                             style={{ margin: "0px 5px" }}
@@ -329,7 +320,8 @@ class DailyCheck extends Component {
                                                                         <tr>
                                                                             <td>{index + 1}</td>
                                                                             <Select
-                                                                                onChange={e => this.onSelect(e, index)}
+
+                                                                                onChange={(e) => this.onSelect(index, e)}
                                                                                 styles={{
                                                                                     control: (base, state) => ({
                                                                                         ...base,
@@ -368,7 +360,7 @@ class DailyCheck extends Component {
                                                                 aria-live="polite"
                                                             >
                                                                 Input material quantity at the end of the day
-                        </div>
+                                                    </div>
                                                         </div>
                                                         <div className="col-sm-7">
                                                             <div
@@ -383,7 +375,7 @@ class DailyCheck extends Component {
                                                                     onClick={this.onSubmit}
                                                                 >
                                                                     Submit
-                                  </button>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -404,20 +396,23 @@ class DailyCheck extends Component {
 }
 
 DailyCheck.propTypes = {
-    getSearchMembers: PropTypes.func.isRequired,
+    //getSearchMembers: PropTypes.func.isRequired,
     addStorageReport: PropTypes.func.isRequired,
-    member: PropTypes.object.isRequired
+    //updateMaterial: PropTypes.func.updateMaterial,
+    member: PropTypes.object.isRequired,
+    storagereport: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-    member: state.member,
-    isLoaded: state.member.isLoaded,
-    storagereport: state.storagereport
+    //member: state.member,
+    isLoaded: state.material.isLoaded,
+    storagereport: state.storagereport,
+    material: state.material,
 });
 
 export default connect(
     mapStateToProps,
-    { getSearchMembers, deleteMember, addStorageReport }
+    { deleteMember, addStorageReport, updateQtyMaterial, getAllMaterials }
 )(DailyCheck);
 
 const inputField = {

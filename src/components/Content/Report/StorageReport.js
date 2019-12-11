@@ -15,8 +15,7 @@ class StorageReport extends Component {
     state = {
         // data: [{ name: 'Page A', pv: 200, amt: 2400 },
         // { name: 'Page B', pv: 6000, amt: 2400 },
-        // { name: 'Page C', pv: 1800, amt: 2400 },
-        // { name: 'Page D', pv: 700, amt: 2400 }]
+
         data: [],
         options: [],
         idMaterial: '',
@@ -61,7 +60,7 @@ class StorageReport extends Component {
                         && createddate.getMonth() >= startdate.getMonth() && createddate.getMonth() <= enddate.getMonth()
                         && createddate.getFullYear() >= startdate.getFullYear() && createddate.getFullYear() <= enddate.getFullYear()) {
 
-                        data.push({ 'name': el.createddate, 'pv': 500, 'amt': 2400 })
+                        data.push({ 'name': el.createddate, 'quantity': 500, 'amt': 2400 })
                     }
                 });
 
@@ -162,7 +161,7 @@ class StorageReport extends Component {
                                         <YAxis />
                                         <Tooltip />
                                         <Legend />
-                                        <Bar dataKey="pv" fill="#8884d8" />
+                                        <Bar dataKey="quantity" fill="#8884d8" />
                                     </BarChart>
                                 </div>
                                 {/* /.row */}

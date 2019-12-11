@@ -29,4 +29,5 @@ export default combineReducers({
   showNoti: notificationReducer,
   supplier: supplierReducer,
   storagereport: storageReportReducer,
+  material: materialReducer,
 })

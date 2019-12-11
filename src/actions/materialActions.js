@@ -4,6 +4,8 @@ import {
     DELETE_MATERIAL,
     MATERIALS_LOADING,
     GET_ALL_MATERIALS,
+    UPDATE_MATERIAL,
+    UPDATE_QTY_MATERIAL
 } from "./types";
 import axios from "axios";
 import { tokenConfig } from './authActions'
@@ -22,7 +24,7 @@ export const getMaterials = (show = 10, page = 1, query) => (
         .catch(er => console.log(er.response));
 };
 
-export const getAllMaterials = (query) => dispatch => {
+export const getAllMaterials = (query) => (dispatch) => {
 
     let newQuery = ''
     if (query === '') newQuery = 'undefined'
@@ -43,7 +45,7 @@ export const deleteMaterial = id => (dispatch, getState) => {
     });
 };
 
-export const addMaterial = newMaterial => dispatch => {
+export const addMaterial = newMaterial => (dispatch, getState) => {
     axios
         .post("/api/material/", newMaterial, tokenConfig(getState))
         .then(response => {
@@ -54,6 +56,44 @@ export const addMaterial = newMaterial => dispatch => {
         })
         .catch(er => console.log(er.response));
 };
+
+export const updateMaterial = newMaterial => (dispatch, getState) => {
+    axios
+        .put(
+            `${process.env.REACT_APP_BACKEND_HOST}/api/material/${newMaterial._id}`,
+            newMaterial,
+            tokenConfig(getState)
+        )
+
+        .then(response => {
+            dispatch({
+                type: UPDATE_MATERIAL,
+                payload: response.data,
+            })
+        })
+        .catch(error => {
+            console.log(error.response)
+        })
+}
+
+export const updateQtyMaterial = newMaterial => (dispatch, getState) => {
+    axios
+        .put(
+            `${process.env.REACT_APP_BACKEND_HOST}/api/material/quantity/${newMaterial._id}`,
+            newMaterial,
+            tokenConfig(getState)
+        )
+
+        .then(response => {
+            dispatch({
+                type: UPDATE_QTY_MATERIAL,
+                payload: response.data,
+            })
+        })
+        .catch(error => {
+            console.log(error.response)
+        })
+}
 
 export const setMaterialsLoading = () => {
     return {
