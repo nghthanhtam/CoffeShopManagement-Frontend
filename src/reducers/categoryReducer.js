@@ -7,7 +7,6 @@ import {
 
 const initialState = {
   categories: [],
-
   isLoaded: false
 };
 

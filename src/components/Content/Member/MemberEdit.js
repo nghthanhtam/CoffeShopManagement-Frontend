@@ -22,24 +22,38 @@ class MemberEdit extends Component {
   };
 
   componentDidMount() {
+
     const { id } = this.props.match.params;
     axios
-      .get(`/api/member/${id}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${id}`, this.tokenConfig(this.props.auth.token))
       .then(response => {
         console.log(response.data);
-        if (response.data === null) this.props.history.push("/404");
-        else
-          this.setState({
-            name: response.data.name,
-            _id: response.data._id,
-            phone: response.data.phone,
-            point: response.data.point
-          });
+
+        this.setState({
+          name: response.data.name,
+          _id: response.data._id,
+          phone: response.data.phone,
+          point: response.data.point
+        });
       })
-      .catch(error => {
-        console.log(error.response);
-      });
+      .catch(er => console.log(er.response));
   }
+
+  tokenConfig = token => {
+    const config = {
+      headers: {
+        "Content-type": "application/json"
+      }
+    };
+
+    //Header
+    if (token) {
+      config.headers["x-auth-token"] = token;
+    }
+
+    return config;
+  };
+
   handleChange = e => {
     //this.setState({ [e.target.name]: e.target.value });
     const { name, value } = e.target;
@@ -71,7 +85,7 @@ class MemberEdit extends Component {
     };
 
     axios
-      .put(`/api/member/${_id}`, newMember)
+      .put(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${_id}`, newMember)
 
       .then(response => {
         if (response.status === 200) {
@@ -246,9 +260,11 @@ class MemberEdit extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-
-});
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
+};
 export default connect(
   mapStateToProps, { showNoti }
 )(MemberEdit);

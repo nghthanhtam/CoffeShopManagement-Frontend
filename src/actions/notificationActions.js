@@ -10,7 +10,6 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 export const showNoti = type => dispatch => {
   switch (type) {
     case 'failure':
-      alert('te');
       NotificationManager.error('Sorry, your data could not be saved!');
       break;
     case 'success':
@@ -18,6 +17,8 @@ export const showNoti = type => dispatch => {
       break;
     case 'warning-order':
       NotificationManager.warning('You have not ordered yet!', 'Warning', 2000, {}, true);
+      break;
+    case '':
       break;
     default:
       break;

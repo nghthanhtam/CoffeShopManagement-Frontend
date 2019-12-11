@@ -10,8 +10,10 @@ import memberReducer from './memberReducer'
 import productReducer from './productReducer'
 import invoiceReducer from './invoiceReducer'
 import payslipReducer from './payslipReducer'
+import materialReducer from './materialReducer'
 import notificationReducer from './notificationReducer'
 import supplierReducer from './supplierReducer'
+import storageReportReducer from './storageReportReducer'
 
 export default combineReducers({
   category: categoryReducer,
@@ -23,6 +25,8 @@ export default combineReducers({
   product: productReducer,
   invoice: invoiceReducer,
   payslip: payslipReducer,
+  material: materialReducer,
   showNoti: notificationReducer,
   supplier: supplierReducer,
+  storagereport: storageReportReducer,
 })

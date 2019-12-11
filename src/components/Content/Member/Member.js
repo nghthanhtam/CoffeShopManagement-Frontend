@@ -23,21 +23,18 @@ class Member extends Component {
   componentDidMount() {
     const { select, currentPage, query } = this.state;
     this.getTotalDocuments();
-
     this.getPages();
-
     this.props.getMembers(select, currentPage, query);
   }
 
   getTotalDocuments = () => {
     const { query } = this.state;
-    console.log(query);
     let newQuery = "";
     if (query === "") newQuery = "undefined";
     else newQuery = query;
 
     axios
-      .get(`/api/member/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/member/count/${newQuery}`)
       .then(response => {
         this.setState({ totalDocuments: response.data });
         console.log(response.data);
@@ -49,13 +46,12 @@ class Member extends Component {
 
   getPages = () => {
     const { select, query } = this.state;
-    console.log(query);
     let newQuery = "";
     if (query === "") newQuery = "undefined";
     else newQuery = query;
 
     axios
-      .get(`/api/member/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/member/count/${newQuery}`)
       .then(response => {
         let pages = Math.floor(response.data / select);
         let remainder = response.data % select;

@@ -3,24 +3,23 @@ import {
   GET_MEMBERS,
   ADD_MEMBER,
   DELETE_MEMBER,
-  GET_MEMBER,
-  MEMBERS_LOADING,
+  UPDATE_MEMBER
 } from './types'
 import axios from 'axios'
-import { log } from 'util'
+import { tokenConfig } from './authActions'
 const mongoose = require('mongoose')
 
-export const getMembers = (show = 5, page = 1, query) => dispatch => {
+export const getMembers = (show = 5, page = 1, query) => (dispatch, getState) => {
   let newQuery = ''
   if (query === '') newQuery = 'undefined'
   else newQuery = query
   axios
     .get(
-      `${process.env.REACT_APP_BACKEND_HOST}/api/member/${show}/${page}/${newQuery}`
+      `${process.env.REACT_APP_BACKEND_HOST}/api/member/${show}/${page}/${newQuery}`,
+      tokenConfig(getState)
     )
 
     .then(response =>
-      //console.log(response.data)
       dispatch({ type: GET_MEMBERS, payload: response.data })
     )
     .catch(er => console.log(er.response))
@@ -39,9 +38,11 @@ export const getSearchMembers = query => dispatch => {
     .catch(er => console.log(er.response))
 }
 
-export const deleteMember = id => dispatch => {
+export const deleteMember = id => (dispatch, getState) => {
   axios
-    .delete(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${id}`)
+    .delete(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${id}`,
+      tokenConfig(getState)
+    )
     .then(response => {
       dispatch({
         type: DELETE_MEMBER,
@@ -50,10 +51,10 @@ export const deleteMember = id => dispatch => {
     })
 }
 
-export const addMember = newMember => dispatch => {
-  console.log(newMember._id)
+export const addMember = newMember => (dispatch, getState) => {
+
   axios
-    .post(`${process.env.REACT_APP_BACKEND_HOST}/api/member/`, newMember)
+    .post(`${process.env.REACT_APP_BACKEND_HOST}/api/member/`, newMember, tokenConfig(getState))
     .then(response => {
       if (newMember._id instanceof mongoose.Types.ObjectId) {
         newMember._id = newMember._id.toString()
@@ -67,8 +68,22 @@ export const addMember = newMember => dispatch => {
     })
 }
 
-export const setMembersLoading = () => {
-  return {
-    type: MEMBERS_LOADING,
-  }
+export const updateMember = newMember => (dispatch, getState) => {
+  axios
+    .put(
+      `${process.env.REACT_APP_BACKEND_HOST}/api/member/${newMember._id}`,
+      newMember,
+      tokenConfig(getState)
+    )
+
+    .then(response => {
+      dispatch({
+        type: UPDATE_MEMBER,
+        payload: response.data,
+      })
+    })
+    .catch(error => {
+      console.log(error.response)
+    })
 }
+

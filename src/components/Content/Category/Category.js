@@ -108,7 +108,7 @@ class Category extends Component {
         key={eachCategory._id}
         category={eachCategory}
         index={index}
-        // deleteCategory={this.props.deleteCategory}
+      // deleteCategory={this.props.deleteCategory}
       />
     ))
   }
@@ -171,148 +171,148 @@ class Category extends Component {
         {!isLoaded ? (
           <Loader></Loader>
         ) : (
-          <Fragment>
-            {/* Content Header (Page header) */}
-            <section className="content-header">
-              <h1>
-                Category
+            <Fragment>
+              {/* Content Header (Page header) */}
+              <section className="content-header">
+                <h1>
+                  Category
                 {/* <small>Preview</small> */}
-              </h1>
-              <ol className="breadcrumb">
-                <li>
-                  <a href="fake_url">
-                    <i className="fa fa-dashboard" /> Home
+                </h1>
+                <ol className="breadcrumb">
+                  <li>
+                    <a href="fake_url">
+                      <i className="fa fa-dashboard" /> Home
                   </a>
-                </li>
-                <li>
-                  <a href="fake_url">Category</a>
-                </li>
-              </ol>
-            </section>
-            {/* Main content */}
-            <section className="content">
-              <div className="row">
-                {/* left column */}
-                <div className="col-md-12">
-                  <div className="box">
-                    <div className="box-header" style={{ marginTop: '5px' }}>
-                      <div style={{ paddingLeft: '5px' }} className="col-md-8">
-                        <h3 className="box-title">
-                          Data Table With Full Features
+                  </li>
+                  <li>
+                    <a href="fake_url">Category</a>
+                  </li>
+                </ol>
+              </section>
+              {/* Main content */}
+              <section className="content">
+                <div className="row">
+                  {/* left column */}
+                  <div className="col-md-12">
+                    <div className="box">
+                      <div className="box-header" style={{ marginTop: '5px' }}>
+                        <div style={{ paddingLeft: '5px' }} className="col-md-8">
+                          <h3 className="box-title">
+                            Data Table With Full Features
                         </h3>
-                      </div>
+                        </div>
 
-                      <div className="col-md-4">
-                        <CategoryModal />
+                        <div className="col-md-4">
+                          <CategoryModal />
+                        </div>
                       </div>
-                    </div>
-                    {/* /.box-header */}
-                    <div className="box-body">
-                      <div
-                        id="example1_wrapper"
-                        className="dataTables_wrapper form-inline dt-bootstrap"
-                      >
-                        <div className="row">
-                          <div>
-                            <div className="col-sm-6">
-                              <div
-                                className="dataTables_length"
-                                id="example1_length"
-                              >
-                                <label>
-                                  Show
+                      {/* /.box-header */}
+                      <div className="box-body">
+                        <div
+                          id="example1_wrapper"
+                          className="dataTables_wrapper form-inline dt-bootstrap"
+                        >
+                          <div className="row">
+                            <div>
+                              <div className="col-sm-6">
+                                <div
+                                  className="dataTables_length"
+                                  id="example1_length"
+                                >
+                                  <label>
+                                    Show
                                   {this.renderSelect()}
-                                  entries
+                                    entries
                                 </label>
+                                </div>
                               </div>
-                            </div>
-                            <div className="col-sm-6">
-                              <div
-                                id="example1_filter"
-                                className="dataTables_filter"
-                              >
-                                <label style={{ float: 'right' }}>
-                                  Search:
+                              <div className="col-sm-6">
+                                <div
+                                  id="example1_filter"
+                                  className="dataTables_filter"
+                                >
+                                  <label style={{ float: 'right' }}>
+                                    Search:
                                   <input
-                                    type="search"
-                                    name="query"
-                                    style={{ margin: '0px 5px' }}
-                                    className="form-control input-sm"
-                                    placeholder="Find me  "
-                                    aria-controls="example1"
-                                    onChange={this.handleOnChange}
-                                    value={this.state.query}
-                                  />
-                                </label>
+                                      type="search"
+                                      name="query"
+                                      style={{ margin: '0px 5px' }}
+                                      className="form-control input-sm"
+                                      placeholder="Find me  "
+                                      aria-controls="example1"
+                                      onChange={this.handleOnChange}
+                                      value={this.state.query}
+                                    />
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="row">
+                            <div className="col-sm-12">
+                              <table
+                                id="example1"
+                                className="table table-bordered table-striped"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th style={{ width: '10%' }}>#</th>
+                                    <th style={{ width: '20%' }}>Category</th>
+                                    <th style={{ width: '20%' }}>Created date</th>
+                                    <th style={{ width: '20%' }}>Creator</th>
+                                    <th style={{ width: '30%' }}>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>{this.renderCategories()}</tbody>
+                                <tfoot>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Category</th>
+                                    <th>Created date</th>
+                                    <th>Creator</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-sm-5">
+                              <div
+                                className="dataTables_info"
+                                id="example1_info"
+                                role="status"
+                                aria-live="polite"
+                              >
+                                Showing 1 to {select} of {totalDocuments} entries
+                            </div>
+                            </div>
+                            <div className="col-sm-7">
+                              <div
+                                className="dataTables_paginate paging_simple_numbers"
+                                id="example1_paginate"
+                              >
+                                <ul
+                                  className="pagination"
+                                  style={{ float: 'right' }}
+                                >
+                                  {this.renderPageButtons()}
+                                </ul>
                               </div>
                             </div>
                           </div>
                         </div>
-
-                        <div className="row">
-                          <div className="col-sm-12">
-                            <table
-                              id="example1"
-                              className="table table-bordered table-striped"
-                            >
-                              <thead>
-                                <tr>
-                                  <th style={{ width: '10%' }}>#</th>
-                                  <th style={{ width: '20%' }}>Category</th>
-                                  <th style={{ width: '20%' }}>Created date</th>
-                                  <th style={{ width: '20%' }}>Creator</th>
-                                  <th style={{ width: '30%' }}>Action</th>
-                                </tr>
-                              </thead>
-                              <tbody>{this.renderCategories()}</tbody>
-                              <tfoot>
-                                <tr>
-                                  <th>#</th>
-                                  <th>Category</th>
-                                  <th>Created date</th>
-                                  <th>Creator</th>
-                                  <th>Action</th>
-                                </tr>
-                              </tfoot>
-                            </table>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-sm-5">
-                            <div
-                              className="dataTables_info"
-                              id="example1_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to {select} of {totalDocuments} entries
-                            </div>
-                          </div>
-                          <div className="col-sm-7">
-                            <div
-                              className="dataTables_paginate paging_simple_numbers"
-                              id="example1_paginate"
-                            >
-                              <ul
-                                className="pagination"
-                                style={{ float: 'right' }}
-                              >
-                                {this.renderPageButtons()}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
+                        {/*/.col (left) */}
                       </div>
-                      {/*/.col (left) */}
+                      {/* /.row */}
                     </div>
-                    {/* /.row */}
                   </div>
                 </div>
-              </div>
-            </section>
-            {/* /.content */}
-          </Fragment>
-        )}
+              </section>
+              {/* /.content */}
+            </Fragment>
+          )}
       </Fragment>
     )
   }

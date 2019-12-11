@@ -57,7 +57,7 @@ export const addCategory = newCategory => (dispatch, getState) => {
       if (newCategory._id instanceof mongoose.Types.ObjectId) {
         newCategory._id = newCategory._id.toString()
       }
-      console.log(newCategory)
+
       dispatch({
         type: ADD_CATEGORY,
         payload: newCategory,

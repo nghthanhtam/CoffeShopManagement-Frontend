@@ -4,6 +4,15 @@ import Footer from './components/Footer'
 import Menu from './components/Menu'
 import Category from './components/Content/Category/Category'
 import CategoryEdit from './components/Content/Category/CategoryEdit'
+import Member from './components/Content/Member/Member'
+import MemberEdit from './components/Content/Member/MemberEdit'
+import PaySlip from './components/Content/PaySlip/PaySlip'
+import PaySlipEdit from './components/Content/PaySlip/PaySlipEdit'
+import Invoice from "./components/Content/OrderAndInvoices/Invoice"
+import StorageReport from "./components/Content/Report/StorageReport"
+import DailyCheck from "./components/Content/Report/DailyCheck"
+import InvoiceEdit from "./components/Content/OrderAndInvoices/InvoiceEdit"
+import OrderScreen from './components/Content/OrderAndInvoices/OrderScreen'
 import Supplier from './components/Content/Supplier/Supplier'
 import SupplierEdit from './components/Content/Supplier/SupplierEdit'
 import ErrorPage from './components/Content/ErrorPage/ErrorPage'
@@ -45,74 +54,95 @@ class CoffeShop extends Component {
         {!this.props.isLoaded ? (
           <Loader></Loader>
         ) : (
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render={() => {
-                return !this.props.isAuthenticated ? (
-                  <Redirect to="/login" />
-                ) : (
-                  <Redirect to="/home" />
-                )
-              }}
-            />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => {
+                  return !this.props.isAuthenticated ? (
+                    <Redirect to="/login" />
+                  ) : (
+                      <Redirect to="/home" />
+                    )
+                }}
+              />
 
-            <Route
-              exact
-              path="/login"
-              render={() => {
-                return !this.props.isAuthenticated ? (
-                  <Login />
-                ) : (
-                  <Redirect to="/home" />
-                )
-              }}
-            />
-            {this.props.isAuthenticated && (
-              <Fragment>
-                <Header />
-                <Menu />
+              <Route
+                exact
+                path="/login"
+                render={() => {
+                  return !this.props.isAuthenticated ? (
+                    <Login />
+                  ) : (
+                      <Redirect to="/home" />
+                    )
+                }}
+              />
+              {this.props.isAuthenticated && (
+                <Fragment>
+                  <Header />
+                  <Menu />
 
-                <div className="content-wrapper">
-                  <Switch>
-                    <Route exact path="/home">
-                      <Home />
-                    </Route>
-                    <Route path="/404">
-                      <ErrorPage />
-                    </Route>
-                    <Route exact path="/category">
-                      <Category />
-                    </Route>
-                    <Route exact path="/role">
-                      <Role />
-                    </Route>
-                    <Route
-                      exact
-                      path="/role/edit/:id"
-                      component={RoleEdit}
-                    ></Route>
-                    <Route
-                      exact
-                      path="/category/edit/:id"
-                      component={CategoryEdit}
-                    ></Route>
-                    <Route exact path="/supplier" component={Supplier}></Route>
-                    <Route
-                      exact
-                      path="/supplier/edit/:id"
-                      component={SupplierEdit}
-                    />
-                    <Route path="*" render={() => <Redirect to="/404" />} />
-                  </Switch>
-                </div>
-                <Footer />
-              </Fragment>
-            )}
-            <Route path="*" render={() => <Redirect to="/login" />} />
-          </Switch>
-        )}
+                  <div className="content-wrapper">
+                    <Switch>
+                      <Route exact path="/home">
+                        <Home />
+                      </Route>
+                      <Route path="/404">
+                        <ErrorPage />
+                      </Route>
+                      <Route exact path="/category">
+                        <Category />
+                      </Route>
+                      <Route exact path="/role">
+                        <Role />
+                      </Route>
+                      <Route
+                        exact
+                        path="/role/edit/:id"
+                        component={RoleEdit}
+                      ></Route>
+                      <Route
+                        exact
+                        path="/category/edit/:id"
+                        component={CategoryEdit}
+                      ></Route>
+                      <Route exact path="/supplier" component={Supplier}></Route>
+                      <Route
+                        exact
+                        path="/supplier/edit/:id"
+                        component={SupplierEdit}
+                      />
+                      <Route exact path="/member" component={Member}></Route>
+                      <Route
+                        exact
+                        path="/member/edit/:id"
+                        component={MemberEdit}
+                      />
+                      <Route exact path="/payslip" component={PaySlip}></Route>
+                      <Route
+                        exact
+                        path="/payslip/edit/:id"
+                        component={PaySlipEdit}
+                      />
+                      <Route exact path="/invoice" component={Invoice}></Route>
+                      <Route exact path="/dailycheck" component={DailyCheck}></Route>
+                      <Route exact path="/storageReport" component={StorageReport}></Route>
+                      <Route
+                        exact
+                        path="/invoice/edit/:id"
+                        component={InvoiceEdit}
+                      />
+                      <Route exact path="/orderScreen" component={OrderScreen}></Route>
+                      <Route path="*" render={() => <Redirect to="/404" />} />
+                    </Switch>
+                  </div>
+                  <Footer />
+                </Fragment>
+              )}
+              <Route path="*" render={() => <Redirect to="/login" />} />
+            </Switch>
+          )}
       </Fragment>
     )
   }

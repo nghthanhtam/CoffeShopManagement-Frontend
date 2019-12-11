@@ -128,7 +128,7 @@ class PaySlipModal extends Component {
           data-toggle="modal"
           data-target="#exampleModalCenter"
         >
-          Add new payslip
+          Add new pay slip
         </button>
         {/* Modal */}
         <form onSubmit={this.onSubmit}>

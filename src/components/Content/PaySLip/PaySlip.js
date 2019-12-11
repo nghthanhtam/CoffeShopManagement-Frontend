@@ -144,7 +144,7 @@ class PaySlip extends Component {
           {/* Content Header (Page header) */}
           <section className="content-header">
             <h1>
-              Pay slip
+              Pay Slip
             {/* <small>Preview</small> */}
             </h1>
             <ol className="breadcrumb">
@@ -154,7 +154,7 @@ class PaySlip extends Component {
               </a>
               </li>
               <li>
-                <a href="fake_url">Pay slip</a>
+                <a href="fake_url">Pay Slip</a>
               </li>
             </ol>
           </section>

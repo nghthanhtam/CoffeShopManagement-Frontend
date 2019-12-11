@@ -30,7 +30,8 @@ class MemberModal extends Component {
         return;
       };
 
-      if (this.props.member.type === 'DELETE_MEMBER' || this.props.member.type === 'GET_MEMBERS') {
+      if (this.props.member.type === 'DELETE_MEMBER' || this.props.member.type === 'GET_MEMBERS' ||
+        this.props.member.type === "GET_SEARCH_MEMBERS") {
         return;
       }
 
@@ -65,17 +66,17 @@ class MemberModal extends Component {
     const newItem = {
       name: this.state.name,
       phone: this.state.phone,
-      point: this.state.point,
+      point: 0,
       createAt: new Date(),
       _id: mongoose.Types.ObjectId(),
     };
 
     this.props.addMember(newItem);
 
-
     // Close modal
     document.getElementById("triggerButton").click();
   };
+
   createNotification = () => {
     const { notiType } = this.state;
     this.props.showNoti(notiType);
@@ -175,7 +176,7 @@ class MemberModal extends Component {
                       type="text"
                       className="form-control"
                       id="point"
-                      defaultValue={0}
+                      value={0}
                       //placeholder="Add point"
                       name="point"
                       disabled={true}
