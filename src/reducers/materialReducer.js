@@ -2,6 +2,7 @@ import {
   GET_MATERIALS,
   ADD_MATERIAL,
   DELETE_MATERIAL,
+  UPDATE_MATERIAL,
   MATERIALS_LOADING
 } from "../actions/types";
 
@@ -36,6 +37,11 @@ export default function(state = initialState, action) {
         ...state,
         isLoaded: false
       };
+    case UPDATE_MATERIAL:
+      return {
+        ...state
+      };
+
     default:
       return state;
   }

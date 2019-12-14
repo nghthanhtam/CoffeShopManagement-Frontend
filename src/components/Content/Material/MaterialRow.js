@@ -58,7 +58,4 @@ class MaterialRow extends Component {
   }
 }
 
-export default connect(
-  null,
-  { deleteMaterial, pushHistory }
-)(MaterialRow);
+export default connect(null, { deleteMaterial, pushHistory })(MaterialRow);

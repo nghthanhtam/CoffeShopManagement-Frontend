@@ -46,7 +46,4 @@ class UserRow extends Component {
   }
 }
 
-export default connect(
-  null,
-  { deleteUser, pushHistory }
-)(UserRow);
+export default connect(null, { deleteUser, pushHistory })(UserRow);

@@ -2,15 +2,15 @@ import {
   GET_USERS,
   ADD_USER,
   DELETE_USER,
-  GET_USER,
   USERS_LOADING,
+  UPDATE_USER,
   CHECK_CUR_PASS_USER
 } from "../actions/types";
 
 const initialState = {
   users: [],
 
-  loading: false
+  isLoaded: false
 };
 
 export default function(state = initialState, action) {
@@ -19,14 +19,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         users: action.payload,
-        loading: false
+        isLoaded: true
       };
     case DELETE_USER:
       return {
         ...state,
-        users: state.users.filter(
-          supplier => supplier._id !== action.payload._id
-        )
+        users: state.users.filter(user => user._id !== action.payload._id)
       };
     case ADD_USER:
       return {
@@ -38,8 +36,11 @@ export default function(state = initialState, action) {
         ...state,
         loading: true
       };
-    default:
-      return state;
+    case UPDATE_USER:
+      console.log("run");
+      return {
+        ...state
+      };
     case CHECK_CUR_PASS_USER:
       return {
         ...state,

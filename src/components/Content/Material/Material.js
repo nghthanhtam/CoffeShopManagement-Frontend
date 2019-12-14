@@ -5,9 +5,15 @@ import { connect } from "react-redux";
 import { getMaterials } from "../../../actions/materialActions";
 import PropTypes from "prop-types";
 import axios from "axios";
+import Loader from "react-loader";
+
+// const mapStateToProps = state => ({
+//   material: state.material
+// });
 
 const mapStateToProps = state => ({
-  material: state.material
+  materials: state.material.materials,
+  isLoaded: state.material.isLoaded
 });
 
 class Material extends Component {
@@ -18,6 +24,10 @@ class Material extends Component {
     pages: [],
     totalDocuments: 0,
     query: ""
+  };
+
+  resetState = () => {
+    this.setState({ select: "10", currentPage: 1, query: "" });
   };
 
   componentDidMount() {
@@ -37,7 +47,9 @@ class Material extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/material/count/${newQuery}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/material/count/${newQuery}`
+      )
       .then(response => {
         this.setState({ totalDocuments: response.data });
       })
@@ -45,6 +57,7 @@ class Material extends Component {
         console.log(er.response);
       });
   };
+
   getPages = () => {
     const { select, query } = this.state;
     let newQuery = "";
@@ -52,7 +65,9 @@ class Material extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/material/count/${newQuery}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/material/count/${newQuery}`
+      )
       .then(response => {
         let pages = Math.floor(response.data / select);
         let remainder = response.data % select;
@@ -92,7 +107,7 @@ class Material extends Component {
   };
 
   renderMaterials = () => {
-    const { materials } = this.props.material;
+    const { materials } = this.props;
     return materials.map((eachMaterial, index) => (
       <MaterialRow
         history={this.props.history}
@@ -102,6 +117,7 @@ class Material extends Component {
       />
     ));
   };
+
   handleChoosePage = e => {
     this.setState({ currentPage: e }, () => {
       const { select, currentPage, query } = this.state;
@@ -161,7 +177,7 @@ class Material extends Component {
         {/* Content Header (Page header) */}
         <section className="content-header">
           <h1>
-            Category
+            Material
             {/* <small>Preview</small> */}
           </h1>
           <ol className="breadcrumb">
@@ -171,7 +187,7 @@ class Material extends Component {
               </a>
             </li>
             <li>
-              <a href="fake_url">Category</a>
+              <a href="fake_url">Material</a>
             </li>
           </ol>
         </section>
@@ -301,10 +317,8 @@ class Material extends Component {
 
 Material.propTypes = {
   getMaterials: PropTypes.func.isRequired,
-  material: PropTypes.object.isRequired
+  materials: PropTypes.array.isRequired,
+  isLoaded: PropTypes.bool.isRequired
 };
 
-export default connect(
-  mapStateToProps,
-  { getMaterials }
-)(Material);
+export default connect(mapStateToProps, { getMaterials })(Material);

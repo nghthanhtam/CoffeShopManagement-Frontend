@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 export default class Menu extends Component {
   render() {
@@ -104,6 +104,22 @@ export default class Menu extends Component {
               <li>
                 <Link to="/category">
                   <i className="fa fa-th" /> <span>Category</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/material">
+                  <i className="fa fa-th" /> <span>Material</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/user">
+                  <i className="fa fa-th" /> <span>User</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
                   </span>
@@ -413,6 +429,6 @@ export default class Menu extends Component {
           {/* /.sidebar */}
         </aside>
       </div>
-    )
+    );
   }
 }

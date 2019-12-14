@@ -14,7 +14,10 @@ class CategoryEdit extends Component {
   componentDidMount() {
     const { id } = this.props.match.params;
     axios
-      .get(`/api/category/${id}`, this.tokenConfig(this.props.auth.token))
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/category/${id}`,
+        this.tokenConfig(this.props.auth.token)
+      )
       .then(response => {
         // console.log(response);
 

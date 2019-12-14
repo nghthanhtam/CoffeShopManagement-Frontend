@@ -110,6 +110,17 @@ class UserModal extends Component {
                     name="username"
                     onChange={this.onChange}
                   />
+                  <label htmlFor="user-username" className="col-form-label">
+                    Password:
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="password"
+                    name="password"
+                    onChange={this.onChange}
+                  />
                   <label htmlFor="user-fullName" className="col-form-label">
                     Fullname:
                   </label>
@@ -171,7 +182,4 @@ class UserModal extends Component {
 const mapStateToProps = state => ({
   user: state.user
 });
-export default connect(
-  mapStateToProps,
-  { addUser }
-)(UserModal);
+export default connect(mapStateToProps, { addUser })(UserModal);

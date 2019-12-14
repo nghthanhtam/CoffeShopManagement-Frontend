@@ -1,13 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import UserModal from "./UserModal";
 import UserRow from "./UserRow";
 import { connect } from "react-redux";
 import { getUsers } from "../../../actions/userActions";
 import PropTypes from "prop-types";
 import axios from "axios";
+import Loader from "react-loader";
 
 const mapStateToProps = state => ({
-  user: state.user
+  users: state.user.users,
+  isLoaded: state.user.isLoaded
 });
 
 class User extends Component {
@@ -37,7 +39,7 @@ class User extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/user/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/user/count/${newQuery}`)
       .then(response => {
         this.setState({ totalDocuments: response.data });
       })
@@ -52,7 +54,7 @@ class User extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/user/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/user/count/${newQuery}`)
       .then(response => {
         let pages = Math.floor(response.data / select);
         let remainder = response.data % select;
@@ -92,7 +94,7 @@ class User extends Component {
   };
 
   renderUsers = () => {
-    const { users } = this.props.user;
+    const { users } = this.props;
     return users.map((eachUser, index) => (
       <UserRow
         history={this.props.history}
@@ -156,157 +158,172 @@ class User extends Component {
 
   render() {
     const { select, totalDocuments } = this.state;
+    const { isLoaded } = this.props;
 
     return (
-      <React.Fragment>
-        {/* Content Header (Page header) */}
-        <section className="content-header">
-          <h1>
-            User
-            {/* <small>Preview</small> */}
-          </h1>
-          <ol className="breadcrumb">
-            <li>
-              <a href="fake_url">
-                <i className="fa fa-dashboard" /> Home
-              </a>
-            </li>
-            <li>
-              <a href="fake_url">User</a>
-            </li>
-          </ol>
-        </section>
-        {/* Main content */}
-        <section className="content">
-          <div className="row">
-            {/* left column */}
-            <div className="col-md-12">
-              <div className="box">
-                <div className="box-header" style={{ marginTop: "5px" }}>
-                  <div style={{ paddingLeft: "5px" }} className="col-md-8">
-                    <h3 className="box-title">Data Table With Full Features</h3>
-                  </div>
+      <Fragment>
+        {!isLoaded ? (
+          <Loader></Loader>
+        ) : (
+          <React.Fragment>
+            {/* Content Header (Page header) */}
+            <section className="content-header">
+              <h1>
+                User
+                {/* <small>Preview</small> */}
+              </h1>
+              <ol className="breadcrumb">
+                <li>
+                  <a href="fake_url">
+                    <i className="fa fa-dashboard" /> Home
+                  </a>
+                </li>
+                <li>
+                  <a href="fake_url">User</a>
+                </li>
+              </ol>
+            </section>
+            {/* Main content */}
+            <section className="content">
+              <div className="row">
+                {/* left column */}
+                <div className="col-md-12">
+                  <div className="box">
+                    <div className="box-header" style={{ marginTop: "5px" }}>
+                      <div style={{ paddingLeft: "5px" }} className="col-md-8">
+                        <h3 className="box-title">
+                          Data Table With Full Features
+                        </h3>
+                      </div>
 
-                  <div className="col-md-4">
-                    <UserModal />
-                  </div>
-                </div>
-                {/* /.box-header */}
-                <div className="box-body">
-                  <div
-                    id="example1_wrapper"
-                    className="dataTables_wrapper form-inline dt-bootstrap"
-                  >
-                    <div className="row">
-                      <div>
-                        <div className="col-sm-6">
-                          <div
-                            className="dataTables_length"
-                            id="example1_length"
-                          >
-                            <label>
-                              Show
-                              {this.renderSelect()}
-                              entries
-                            </label>
+                      <div className="col-md-4">
+                        <UserModal />
+                      </div>
+                    </div>
+                    {/* /.box-header */}
+                    <div className="box-body">
+                      <div
+                        id="example1_wrapper"
+                        className="dataTables_wrapper form-inline dt-bootstrap"
+                      >
+                        <div className="row">
+                          <div>
+                            <div className="col-sm-6">
+                              <div
+                                className="dataTables_length"
+                                id="example1_length"
+                              >
+                                <label>
+                                  Show
+                                  {this.renderSelect()}
+                                  entries
+                                </label>
+                              </div>
+                            </div>
+                            <div className="col-sm-6">
+                              <div
+                                id="example1_filter"
+                                className="dataTables_filter"
+                              >
+                                <label style={{ float: "right" }}>
+                                  Search:
+                                  <input
+                                    type="search"
+                                    name="query"
+                                    style={{ margin: "0px 5px" }}
+                                    className="form-control input-sm"
+                                    placeholder="Find me  "
+                                    aria-controls="example1"
+                                    onChange={this.handleOnChange}
+                                    value={this.state.query}
+                                  />
+                                </label>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="col-sm-6">
-                          <div
-                            id="example1_filter"
-                            className="dataTables_filter"
-                          >
-                            <label style={{ float: "right" }}>
-                              Search:
-                              <input
-                                type="search"
-                                name="query"
-                                style={{ margin: "0px 5px" }}
-                                className="form-control input-sm"
-                                placeholder="Find me  "
-                                aria-controls="example1"
-                                onChange={this.handleOnChange}
-                                value={this.state.query}
-                              />
-                            </label>
+
+                        <div className="row">
+                          <div className="col-sm-12">
+                            <table
+                              id="example1"
+                              className="table table-bordered table-striped"
+                            >
+                              <thead>
+                                <tr>
+                                  <th style={{ width: "5%" }}>#</th>
+                                  <th style={{ width: "5%" }}>ID Role</th>
+                                  <th style={{ width: "10%" }}>Username</th>
+                                  <th style={{ width: "20%" }}>Full name</th>
+                                  <th style={{ width: "10%" }}>Phone number</th>
+                                  <th style={{ width: "20%" }}>Address</th>
+                                  <th style={{ width: "30%" }}>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>{this.renderUsers()}</tbody>
+                              <tfoot>
+                                <tr>
+                                  <th>#</th>
+                                  <th>ID Role</th>
+                                  <th>Username</th>
+                                  <th>Full name</th>
+                                  <th>Phone number</th>
+                                  <th>Address</th>
+                                  <th>Action</th>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-5">
+                            <div
+                              className="dataTables_info"
+                              id="example1_info"
+                              role="status"
+                              aria-live="polite"
+                            >
+                              Showing 1 to{" "}
+                              {totalDocuments < select
+                                ? totalDocuments
+                                : select}{" "}
+                              of {totalDocuments} entries
+                            </div>
+                          </div>
+                          <div className="col-sm-7">
+                            <div
+                              className="dataTables_paginate paging_simple_numbers"
+                              id="example1_paginate"
+                            >
+                              <ul
+                                className="pagination"
+                                style={{ float: "right" }}
+                              >
+                                {this.renderPageButtons()}
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      {/*/.col (left) */}
                     </div>
-
-                    <div className="row">
-                      <div className="col-sm-12">
-                        <table
-                          id="example1"
-                          className="table table-bordered table-striped"
-                        >
-                          <thead>
-                            <tr>
-                              <th style={{ width: "5%" }}>#</th>
-                              <th style={{ width: "5%" }}>ID Role</th>
-                              <th style={{ width: "10%" }}>Username</th>
-                              <th style={{ width: "20%" }}>Full name</th>
-                              <th style={{ width: "10%" }}>Phone number</th>
-                              <th style={{ width: "20%" }}>Address</th>
-                              <th style={{ width: "30%" }}>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>{this.renderUsers()}</tbody>
-                          <tfoot>
-                            <tr>
-                              <th>#</th>
-                              <th>ID Role</th>
-                              <th>Username</th>
-                              <th>Full name</th>
-                              <th>Phone number</th>
-                              <th>Address</th>
-                              <th>Action</th>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-sm-5">
-                        <div
-                          className="dataTables_info"
-                          id="example1_info"
-                          role="status"
-                          aria-live="polite"
-                        >
-                          Showing 1 to{" "}
-                          {totalDocuments < select ? totalDocuments : select} of{" "}
-                          {totalDocuments} entries
-                        </div>
-                      </div>
-                      <div className="col-sm-7">
-                        <div
-                          className="dataTables_paginate paging_simple_numbers"
-                          id="example1_paginate"
-                        >
-                          <ul className="pagination" style={{ float: "right" }}>
-                            {this.renderPageButtons()}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+                    {/* /.row */}
                   </div>
-                  {/*/.col (left) */}
                 </div>
-                {/* /.row */}
               </div>
-            </div>
-          </div>
-        </section>
-        {/* /.content */}
-      </React.Fragment>
+            </section>
+            {/* /.content */}
+          </React.Fragment>
+        )}
+      </Fragment>
     );
   }
 }
 
 User.propTypes = {
   getUsers: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
+  users: PropTypes.array.isRequired,
+  isLoaded: PropTypes.bool.isRequired
 };
 
 export default connect(mapStateToProps, { getUsers })(User);

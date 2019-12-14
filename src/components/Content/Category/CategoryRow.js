@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { deleteCategory } from "../../../actions/categoryActions";
 import { pushHistory } from "../../../actions/historyActions";
 class CategoryRow extends Component {
-
   convertDate = date => {
     const newDate = new Date(date);
     let year = newDate.getFullYear();
@@ -35,7 +34,7 @@ class CategoryRow extends Component {
     //     categories
     //   }
     // })
-    this.props.resetState();
+    // this.props.resetState();
     this.props.deleteCategory(id);
   };
 

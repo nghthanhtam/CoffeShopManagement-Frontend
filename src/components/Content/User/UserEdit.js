@@ -1,8 +1,9 @@
 import React, { Fragment, Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-import { deleteUser } from "../../../actions/userActions";
 import { pushHistory } from "../../../actions/historyActions";
+import { updateUser } from "../../../actions/userActions";
+import Loader from "react-loader";
 
 class UserEdit extends Component {
   state = {
@@ -24,7 +25,10 @@ class UserEdit extends Component {
     const { id } = this.props.match.params;
 
     axios
-      .get(`/api/user/${id}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/user/${id}`,
+        this.tokenConfig(this.props.auth.token)
+      )
       .then(response => {
         if (response.data === null) this.props.pushHistory("/404");
         else {
@@ -50,6 +54,21 @@ class UserEdit extends Component {
         console.log(error.response);
       });
   }
+
+  tokenConfig = token => {
+    const config = {
+      headers: {
+        "Content-type": "application/json"
+      }
+    };
+
+    //Header
+    if (token) {
+      config.headers["x-auth-token"] = token;
+    }
+
+    return config;
+  };
 
   validatePassword(password) {
     return new RegExp(/^[a-zA-Z0-9]+$/).test(password);
@@ -104,15 +123,8 @@ class UserEdit extends Component {
       };
       console.log("Not changed pass");
     }
-    axios
-      .put(`/api/user/${_id}`, newUser)
-
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error.response);
-      });
+    console.log(newUser);
+    this.props.updateUser(newUser);
     //Quay về trang chính
     this.props.history.push("/user");
   };
@@ -132,7 +144,10 @@ class UserEdit extends Component {
     console.log("TCL: UserEdit -> userCurPass", userChangePass);
 
     axios
-      .post(`/api/user/cp/${_id}`, userChangePass)
+      .post(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/user/cp/${_id}`,
+        userChangePass
+      )
       .then(response => {
         console.log(response);
         if (response.status === 200) this.setState({ changingPassword: true });
@@ -161,287 +176,303 @@ class UserEdit extends Component {
 
     return (
       <Fragment>
-        {/* Content Header (Page header) */}
-        <section className="content-header">
-          <h1>
-            User
-            {/* <small>Preview</small> */}
-          </h1>
-          <ol className="breadcrumb">
-            <li>
-              <a href="/">
-                <i className="fa fa-dashboard" /> Home
-              </a>
-            </li>
-            <li>
-              <a href="/user">User</a>
-            </li>
-            <li>
-              <a href="fake_url">Edit</a>
-            </li>
-          </ol>
-        </section>
-        {/* Main content */}
-        <section className="content">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="box box-info">
-                <div className="box-header with-border">
-                  <h3 className="box-title">User Edit Form</h3>
-                </div>
-                {/* /.box-header */}
-                {/* form start */}
-                <form className="form-horizontal" onSubmit={this.handleSubmit}>
-                  <div className="box-body">
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">ID</label>
-                      <div className="col-sm-10">
-                        <input
-                          name="_id"
-                          type="text"
-                          id="userID"
-                          placeholder="Loading..."
-                          className="form-control"
-                          defaultValue={_id}
-                          disabled
-                          //onChange={this.handleChange}
-                        />
-                      </div>
+        {!_id ? (
+          <Loader></Loader>
+        ) : (
+          <Fragment>
+            {/* Content Header (Page header) */}
+            <section className="content-header">
+              <h1>
+                User
+                {/* <small>Preview</small> */}
+              </h1>
+              <ol className="breadcrumb">
+                <li>
+                  <a href="/">
+                    <i className="fa fa-dashboard" /> Home
+                  </a>
+                </li>
+                <li>
+                  <a href="/user">User</a>
+                </li>
+                <li>
+                  <a href="fake_url">Edit</a>
+                </li>
+              </ol>
+            </section>
+            {/* Main content */}
+            <section className="content">
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="box box-info">
+                    <div className="box-header with-border">
+                      <h3 className="box-title">User Edit Form</h3>
                     </div>
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">ID Role</label>
-                      <div className="col-sm-10">
-                        <input
-                          name="idRole"
-                          type="text"
-                          className="form-control"
-                          id="userIdRole"
-                          placeholder="Loading..."
-                          value={idRole}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">Username</label>
-                      <div className="col-sm-10">
-                        <input
-                          name="username"
-                          type="text"
-                          className="form-control"
-                          id="userUsername"
-                          placeholder="Loading..."
-                          value={username}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">
-                        Full Name
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          name="fullName"
-                          type="text"
-                          className="form-control"
-                          id="userFullName"
-                          placeholder="Loading..."
-                          value={fullName}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">
-                        Phone Number
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          name="phoneNumber"
-                          type="text"
-                          className="form-control"
-                          id="userPhoneNumber"
-                          placeholder="Loading..."
-                          value={phoneNumber}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="col-sm-2 control-label">Address</label>
-                      <div className="col-sm-10">
-                        <input
-                          name="address"
-                          type="text"
-                          className="form-control"
-                          id="userAddress"
-                          placeholder="Loading..."
-                          value={address}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {/* /.box-body */}
-                  <div className="box-footer">
-                    <button
-                      type="button"
-                      onClick={this.handleCancel}
-                      className="btn btn-default"
+                    {/* /.box-header */}
+                    {/* form start */}
+                    <form
+                      className="form-horizontal"
+                      onSubmit={this.handleSubmit}
                     >
-                      Cancel
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary pull-right"
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      id="triggerChangePassButton"
-                      style={{ float: "right" }}
-                      className="btn btn-info"
-                      data-toggle="modal"
-                      data-target="#exampleModalCenter"
-                      onClick={this.handleOnClick}
-                    >
-                      Change Password
-                    </button>
-
-                    {/* Dialog change Password */}
-                    <div
-                      className="modal fade"
-                      id="exampleModalCenter"
-                      tabIndex={-1}
-                      role="dialog"
-                      aria-labelledby="exampleModalCenterTitle"
-                      aria-hidden="true"
-                    >
-                      <div
-                        className="modal-dialog modal-dialog-centered"
-                        role="document"
-                      >
-                        <div className="modal-content">
-                          <div className="modal-header">
-                            <span>
-                              <h3
-                                className="modal-title"
-                                id="exampleModalLongTitle"
-                              >
-                                Change Password
-                              </h3>
-                            </span>
-                            <span>
-                              <button
-                                type="button"
-                                className="close"
-                                data-dismiss="modal"
-                                aria-label="Close"
-                              >
-                                <span aria-hidden="true">×</span>
-                              </button>
-                            </span>
+                      <div className="box-body">
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">ID</label>
+                          <div className="col-sm-10">
+                            <input
+                              name="_id"
+                              type="text"
+                              id="userID"
+                              placeholder="Loading..."
+                              className="form-control"
+                              defaultValue={_id}
+                              disabled
+                              //onChange={this.handleChange}
+                            />
                           </div>
-                          <div className="modal-body">
-                            <div className="form-group">
-                              <label className="col-form-label">ID:</label>
-                              <input
-                                name="_id"
-                                type="text"
-                                id="userIDModal"
-                                placeholder="Loading..."
-                                className="form-control"
-                                defaultValue={_id}
-                                disabled
-                              />
-                              <label className="col-form-label">
-                                Username:
-                              </label>
-                              <input
-                                name="username"
-                                type="text"
-                                id="userUsernameModal"
-                                placeholder="Loading..."
-                                className="form-control"
-                                value={username}
-                                disabled
-                              />
-                              <label className="col-form-label">
-                                Current Password:
-                              </label>
-                              <input
-                                type="password"
-                                className="form-control"
-                                id="userCurPassword"
-                                //placeholder="Loading"
-                                name="curPassword"
-                                onChange={this.handleChange}
-                              />
-                              {this.state.curPassError && (
-                                <p className="text-red">
-                                  Wrong current password
-                                </p>
-                              )}
-                              <label className="col-form-label">
-                                New Password:
-                              </label>
-                              <input
-                                type="password"
-                                className="form-control"
-                                id="userNewPassword"
-                                value={newPassword}
-                                name="newPassword"
-                                onChange={this.handleChange}
-                              />
-                              <label className="col-form-label">
-                                Re-enter new Password:
-                              </label>
-                              <input
-                                type="password"
-                                className="form-control"
-                                id="userReNewPassword"
-                                //placeholder="Loading"
-                                name="reNewPassword"
-                                onChange={this.handleChange}
-                              />
-                            </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">
+                            ID Role
+                          </label>
+                          <div className="col-sm-10">
+                            <input
+                              name="idRole"
+                              type="text"
+                              className="form-control"
+                              id="userIdRole"
+                              placeholder="Loading..."
+                              value={idRole}
+                              onChange={this.handleChange}
+                            />
                           </div>
-                          <div className="modal-footer">
-                            <button
-                              type="button"
-                              className="btn btn-secondary"
-                              data-dismiss="modal"
-                            >
-                              Close
-                            </button>
-                            <button
-                              type="button"
-                              onClick={this.handleChangePass}
-                              className="btn btn-primary"
-                              disabled={this.state.inputErrors}
-                              //data-dismiss="modal"
-                            >
-                              Change
-                            </button>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">
+                            Username
+                          </label>
+                          <div className="col-sm-10">
+                            <input
+                              name="username"
+                              type="text"
+                              className="form-control"
+                              id="userUsername"
+                              placeholder="Loading..."
+                              value={username}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">
+                            Full Name
+                          </label>
+                          <div className="col-sm-10">
+                            <input
+                              name="fullName"
+                              type="text"
+                              className="form-control"
+                              id="userFullName"
+                              placeholder="Loading..."
+                              value={fullName}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">
+                            Phone Number
+                          </label>
+                          <div className="col-sm-10">
+                            <input
+                              name="phoneNumber"
+                              type="text"
+                              className="form-control"
+                              id="userPhoneNumber"
+                              placeholder="Loading..."
+                              value={phoneNumber}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label">
+                            Address
+                          </label>
+                          <div className="col-sm-10">
+                            <input
+                              name="address"
+                              type="text"
+                              className="form-control"
+                              id="userAddress"
+                              placeholder="Loading..."
+                              value={address}
+                              onChange={this.handleChange}
+                            />
                           </div>
                         </div>
                       </div>
-                    </div>
+                      {/* /.box-body */}
+                      <div className="box-footer">
+                        <button
+                          type="button"
+                          onClick={this.handleCancel}
+                          className="btn btn-default"
+                        >
+                          Cancel
+                        </button>
+
+                        <button
+                          type="submit"
+                          className="btn btn-primary pull-right"
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          id="triggerChangePassButton"
+                          style={{ float: "right" }}
+                          className="btn btn-info"
+                          data-toggle="modal"
+                          data-target="#exampleModalCenter"
+                          onClick={this.handleOnClick}
+                        >
+                          Change Password
+                        </button>
+
+                        {/* Dialog change Password */}
+                        <div
+                          className="modal fade"
+                          id="exampleModalCenter"
+                          tabIndex={-1}
+                          role="dialog"
+                          aria-labelledby="exampleModalCenterTitle"
+                          aria-hidden="true"
+                        >
+                          <div
+                            className="modal-dialog modal-dialog-centered"
+                            role="document"
+                          >
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <span>
+                                  <h3
+                                    className="modal-title"
+                                    id="exampleModalLongTitle"
+                                  >
+                                    Change Password
+                                  </h3>
+                                </span>
+                                <span>
+                                  <button
+                                    type="button"
+                                    className="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">×</span>
+                                  </button>
+                                </span>
+                              </div>
+                              <div className="modal-body">
+                                <div className="form-group">
+                                  <label className="col-form-label">ID:</label>
+                                  <input
+                                    name="_id"
+                                    type="text"
+                                    id="userIDModal"
+                                    placeholder="Loading..."
+                                    className="form-control"
+                                    defaultValue={_id}
+                                    disabled
+                                  />
+                                  <label className="col-form-label">
+                                    Username:
+                                  </label>
+                                  <input
+                                    name="username"
+                                    type="text"
+                                    id="userUsernameModal"
+                                    placeholder="Loading..."
+                                    className="form-control"
+                                    value={username}
+                                    disabled
+                                  />
+                                  <label className="col-form-label">
+                                    Current Password:
+                                  </label>
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="userCurPassword"
+                                    //placeholder="Loading"
+                                    name="curPassword"
+                                    onChange={this.handleChange}
+                                  />
+                                  {this.state.curPassError && (
+                                    <p className="text-red">
+                                      Wrong current password
+                                    </p>
+                                  )}
+                                  <label className="col-form-label">
+                                    New Password:
+                                  </label>
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="userNewPassword"
+                                    value={newPassword}
+                                    name="newPassword"
+                                    onChange={this.handleChange}
+                                  />
+                                  <label className="col-form-label">
+                                    Re-enter new Password:
+                                  </label>
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    id="userReNewPassword"
+                                    //placeholder="Loading"
+                                    name="reNewPassword"
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="modal-footer">
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  data-dismiss="modal"
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={this.handleChangePass}
+                                  className="btn btn-primary"
+                                  disabled={this.state.inputErrors}
+                                  //data-dismiss="modal"
+                                >
+                                  Change
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* /.box-footer */}
+                    </form>
                   </div>
-                  {/* /.box-footer */}
-                </form>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
+            </section>
+          </Fragment>
+        )}
       </Fragment>
     );
   }
 }
 const mapStateToProps = state => ({
-  history: state.history.history
+  history: state.history.history,
+  auth: state.auth
 });
-export default connect(mapStateToProps, { deleteUser, pushHistory })(UserEdit);
+export default connect(mapStateToProps, { updateUser, pushHistory })(UserEdit);
