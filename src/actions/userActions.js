@@ -79,7 +79,7 @@ export const checkCurPassUser = id => (dispatch, getState) => {
 };
 
 export const updateUser = newUser => (dispatch, getState) => {
-  console.log(newUser._id);
+  console.log(newUser);
   axios
     .put(
       `${process.env.REACT_APP_BACKEND_HOST}/api/user/${newUser._id}`,
@@ -88,7 +88,7 @@ export const updateUser = newUser => (dispatch, getState) => {
     )
 
     .then(response => {
-      console.log("response");
+      console.log(response);
       dispatch({
         type: UPDATE_USER,
         payload: response.data

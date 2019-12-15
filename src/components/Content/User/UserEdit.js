@@ -9,6 +9,7 @@ class UserEdit extends Component {
   state = {
     idRole: "",
     username: "",
+    password: "",
     fullName: "",
     phoneNumber: "",
     address: "",
@@ -35,14 +36,17 @@ class UserEdit extends Component {
           const {
             idRole,
             username,
+            password,
             fullName,
             phoneNumber,
             address,
             _id
           } = response.data;
+          console.log(response.data);
           this.setState({
             idRole,
             username,
+            password,
             fullName,
             phoneNumber,
             address,
@@ -90,6 +94,7 @@ class UserEdit extends Component {
     const {
       idRole,
       username,
+      password,
       fullName,
       phoneNumber,
       address,
@@ -115,6 +120,7 @@ class UserEdit extends Component {
     } else {
       newUser = {
         idRole,
+        password,
         username,
         fullName,
         phoneNumber,
@@ -123,8 +129,18 @@ class UserEdit extends Component {
       };
       console.log("Not changed pass");
     }
-    console.log(newUser);
+    // console.log(newUser);
     this.props.updateUser(newUser);
+    // axios
+    //   .put(`${process.env.REACT_APP_BACKEND_HOST}/api/user/${_id}`, newUser)
+
+    //   .then(response => {
+    //     console.log(response.data);
+    //   })
+    //   .catch(error => {
+    //     console.log(error.response);
+    //   });
+
     //Quay về trang chính
     this.props.history.push("/user");
   };
@@ -146,7 +162,8 @@ class UserEdit extends Component {
     axios
       .post(
         `${process.env.REACT_APP_BACKEND_HOST}/api/user/cp/${_id}`,
-        userChangePass
+        userChangePass,
+        this.tokenConfig(this.props.auth.token)
       )
       .then(response => {
         console.log(response);
@@ -161,6 +178,16 @@ class UserEdit extends Component {
     //document.getElementById("triggerButton").click();
   };
 
+  openModal() {
+    this.setState(prevState => ({ show: !prevState.show }));
+  }
+
+  closeModal(e) {
+    if (e.target.id === "modal") {
+      this.setState({ show: false });
+    }
+  }
+
   render() {
     const {
       idRole,
@@ -172,7 +199,9 @@ class UserEdit extends Component {
       newPassword
     } = this.state;
 
-    console.log("changingPass " + this.state.changingPassword);
+    this.state = {
+      show: false
+    };
 
     return (
       <Fragment>
@@ -334,7 +363,7 @@ class UserEdit extends Component {
                           className="btn btn-info"
                           data-toggle="modal"
                           data-target="#exampleModalCenter"
-                          onClick={this.handleOnClick}
+                          onClick={() => this.openModal()}
                         >
                           Change Password
                         </button>
@@ -374,7 +403,10 @@ class UserEdit extends Component {
                                 </span>
                               </div>
                               <div className="modal-body">
-                                <div className="form-group">
+                                <div
+                                  className="form-group"
+                                  style={{ margin: 10 }}
+                                >
                                   <label className="col-form-label">ID:</label>
                                   <input
                                     name="_id"

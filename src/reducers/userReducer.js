@@ -37,7 +37,6 @@ export default function(state = initialState, action) {
         loading: true
       };
     case UPDATE_USER:
-      console.log("run");
       return {
         ...state
       };
