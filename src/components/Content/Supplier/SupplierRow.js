@@ -25,20 +25,20 @@ class SupplierRow extends Component {
     this.props.deleteSupplier(id);
   };
   render() {
-    const { Supplier, index } = this.props;
+    const { supplier, index } = this.props;
 
     return (
       <tr>
         <td>{index + 1}</td>
-        <td>{Supplier.name}</td>
-        <td>{Supplier.phone}</td>
-        <td>{Supplier.address}</td>
-        <td>{this.convertDate(Supplier.createAt)}</td>
+        <td>{supplier.name}</td>
+        <td>{supplier.phone}</td>
+        <td>{supplier.address}</td>
+        <td>{this.convertDate(supplier.createAt)}</td>
         <td>Uknown</td>
         <td>
           <div className="btn-group">
             <button
-              onClick={() => this.handleEdit(Supplier._id)}
+              onClick={() => this.handleEdit(supplier._id)}
               type="button"
               className="btn btn-success"
             >
@@ -46,7 +46,7 @@ class SupplierRow extends Component {
             </button>
 
             <button
-              onClick={() => this.handleDelete(Supplier._id)}
+              onClick={() => this.handleDelete(supplier._id)}
               type="button"
               className="btn btn-danger"
             >
@@ -59,11 +59,4 @@ class SupplierRow extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  supplier: state.supplier
-});
-
-export default connect(
-  mapStateToProps,
-  { deleteSupplier }
-)(SupplierRow);
+export default connect(null, { deleteSupplier })(SupplierRow);

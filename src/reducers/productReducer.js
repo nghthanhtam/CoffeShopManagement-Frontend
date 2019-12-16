@@ -2,8 +2,7 @@ import {
   GET_PRODUCTS,
   ADD_PRODUCT,
   DELETE_PRODUCT,
-  GET_PRODUCT,
-  PRODUCTS_LOADING
+  GET_PRODUCT
 } from "../actions/types";
 
 const initialState = {
@@ -11,7 +10,7 @@ const initialState = {
   loading: false
 };
 
-export default function (state = initialState, action) {
+export default function(state = initialState, action) {
   switch (action.type) {
     case GET_PRODUCTS:
       return {
@@ -22,20 +21,14 @@ export default function (state = initialState, action) {
     case DELETE_PRODUCT:
       return {
         ...state,
-        products: state.products.filter(
-          prod => prod._id !== action.payload._id
-        )
+        products: state.products.filter(prod => prod._id !== action.payload._id)
       };
     case ADD_PRODUCT:
       return {
         ...state,
         products: [action.payload, ...state.products]
       };
-    case PRODUCTS_LOADING:
-      return {
-        ...state,
-        loading: true
-      };
+
     default:
       return state;
   }

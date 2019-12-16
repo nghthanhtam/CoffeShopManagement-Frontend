@@ -1,8 +1,8 @@
 import React, { Fragment, Component } from "react";
 import { connect } from "react-redux";
 import { showNoti } from "../../../actions/notificationActions";
-import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import "react-notifications/lib/notifications.css";
+import { NotificationContainer } from "react-notifications";
 import axios from "axios";
 
 class MemberEdit extends Component {
@@ -12,28 +12,30 @@ class MemberEdit extends Component {
     point: 0,
     _id: "",
     msg: "",
-    notiType: "",
+    notiType: ""
   };
 
   createNotification = () => {
     const { notiType } = this.state;
     this.props.showNoti(notiType);
-    this.setState({ notiType: '' });
+    this.setState({ notiType: "" });
   };
 
   componentDidMount() {
-
     const { id } = this.props.match.params;
     axios
-      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${id}`, this.tokenConfig(this.props.auth.token))
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/member/${id}`,
+        this.tokenConfig(this.props.auth.token)
+      )
       .then(response => {
-        console.log(response.data);
-
+        if (response.data === null) this.props.history.push("/404");
+        const { name, phone, point, _id } = response.data;
         this.setState({
-          name: response.data.name,
-          _id: response.data._id,
-          phone: response.data.phone,
-          point: response.data.point
+          name,
+          _id,
+          phone,
+          point
         });
       })
       .catch(er => console.log(er.response));
@@ -63,7 +65,7 @@ class MemberEdit extends Component {
     const isPassed = this.validatePhone(value);
     //const inputErrors = isPassed ? false : true;
 
-    if (!isPassed && name === 'phone') {
+    if (!isPassed && name === "phone") {
       msg = "Phone can only contain numbers and spaces";
     }
     this.setState({ [name]: value, msg: msg });
@@ -85,26 +87,32 @@ class MemberEdit extends Component {
     };
 
     axios
-      .put(`${process.env.REACT_APP_BACKEND_HOST}/api/member/${_id}`, newMember)
+      .put(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/member/${_id}`,
+        newMember,
+        this.tokenConfig(this.props.auth.token)
+      )
 
       .then(response => {
         if (response.status === 200) {
-          this.setState({ notiType: 'success' });
+          this.setState({ notiType: "success" });
 
-          setTimeout(function () { //Start the timer
-            window.location.replace("/member");
-          }.bind(this), 500)
-
+          setTimeout(
+            function() {
+              //Start the timer
+              window.location.replace("/member");
+            }.bind(this),
+            500
+          );
         }
         console.log(response.data);
       })
       .catch(error => {
-        this.setState({ notiType: 'failure' });
+        this.setState({ notiType: "failure" });
         console.log(error.response);
       });
 
     //Quay về trang chính
-
   };
 
   handleCancel = e => {
@@ -115,9 +123,7 @@ class MemberEdit extends Component {
 
     return (
       <Fragment>
-        {this.state.notiType !== "" ? (
-          this.createNotification()
-        ) : null}
+        {this.state.notiType !== "" ? this.createNotification() : null}
         <NotificationContainer />
 
         {/* Content Header (Page header) */}
@@ -151,7 +157,7 @@ class MemberEdit extends Component {
                 {/* /.box-header */}
                 {/* form start */}
                 <form className="form-horizontal" onSubmit={this.handleSubmit}>
-                  {this.state.msg != '' ? (
+                  {this.state.msg != "" ? (
                     <div className="alert alert-danger alert-dismissible">
                       {this.state.msg}
                     </div>
@@ -171,7 +177,7 @@ class MemberEdit extends Component {
                           id="inputEmail3"
                           placeholder="Loading..."
                           className="form-control"
-                          defaultValue={_id}
+                          value={_id}
                           disabled={true}
                           onChange={this.handleChange}
                         />
@@ -191,7 +197,7 @@ class MemberEdit extends Component {
                           className="form-control"
                           id="inputName"
                           placeholder="Loaiding..."
-                          defaultValue={name}
+                          value={name}
                           onChange={this.handleChange}
                         />
                       </div>
@@ -210,7 +216,7 @@ class MemberEdit extends Component {
                           className="form-control"
                           id="inputPhone"
                           placeholder="Loading..."
-                          defaultValue={phone}
+                          value={phone}
                           onChange={this.handleChange}
                         />
                       </div>
@@ -229,7 +235,7 @@ class MemberEdit extends Component {
                           className="form-control"
                           id="inputPoint"
                           placeholder="Loading..."
-                          defaultValue={point}
+                          value={point}
                           onChange={this.handleChange}
                           disabled
                         />
@@ -265,7 +271,4 @@ const mapStateToProps = state => {
     auth: state.auth
   };
 };
-export default connect(
-  mapStateToProps, { showNoti }
-)(MemberEdit);
-
+export default connect(mapStateToProps, { showNoti })(MemberEdit);

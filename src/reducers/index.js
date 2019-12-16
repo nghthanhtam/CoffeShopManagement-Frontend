@@ -1,19 +1,19 @@
-import { combineReducers } from 'redux'
-import categoryReducer from './categoryReducer'
-import errorReducer from './errorReducer'
+import { combineReducers } from "redux";
+import categoryReducer from "./categoryReducer";
+import errorReducer from "./errorReducer";
 
-import authReducer from './authReducer'
-import historyReducer from './historyReducer'
-import roleReducer from './roleReducer'
+import authReducer from "./authReducer";
+import historyReducer from "./historyReducer";
+import roleReducer from "./roleReducer";
 
-import memberReducer from './memberReducer'
-import productReducer from './productReducer'
-import invoiceReducer from './invoiceReducer'
-import payslipReducer from './payslipReducer'
-import materialReducer from './materialReducer'
-import notificationReducer from './notificationReducer'
-import supplierReducer from './supplierReducer'
-import storageReportReducer from './storageReportReducer'
+import memberReducer from "./memberReducer";
+import productReducer from "./productReducer";
+import invoiceReducer from "./invoiceReducer";
+import payslipReducer from "./payslipReducer";
+import materialReducer from "./materialReducer";
+import notificationReducer from "./notificationReducer";
+import supplierReducer from "./supplierReducer";
+import storageReportReducer from "./storageReportReducer";
 
 export default combineReducers({
   category: categoryReducer,
@@ -28,6 +28,5 @@ export default combineReducers({
   material: materialReducer,
   showNoti: notificationReducer,
   supplier: supplierReducer,
-  storagereport: storageReportReducer,
-  material: materialReducer,
-})
+  storagereport: storageReportReducer
+});

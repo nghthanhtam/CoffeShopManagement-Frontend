@@ -4,23 +4,26 @@ import { connect } from "react-redux";
 import { addRole } from "../../../actions/roleActions";
 const mongoose = require("mongoose");
 
+const initialState = {
+  name: "",
+  _id: "",
+  memberManagement: false,
+  productManagement: false,
+  categoryManagement: false,
+  userManagement: false,
+  invoiceManagement: false,
+  supplierManagement: false,
+  payslipManagement: false,
+  materialManagement: false,
+  materialReceiptNoteManagement: false,
+  roleManagement: false,
+  msg: "",
+  inputErrors: false,
+  checkboxErrors: false
+};
+
 class RoleModal extends Component {
-  state = {
-    name: "",
-    memberManagement: false,
-    productManagement: false,
-    categoryManagement: false,
-    customerManagement: false,
-    invoiceManagement: false,
-    supplierManagement: false,
-    billManagement: false,
-    materialManagement: false,
-    materialReceiptNoteManagement: false,
-    roleManagement: false,
-    msg: "",
-    inputErrors: false,
-    checkboxErrors: false
-  };
+  state = initialState;
 
   onChange = e => {
     const target = e.target;
@@ -67,10 +70,10 @@ class RoleModal extends Component {
       memberManagement,
       productManagement,
       categoryManagement,
-      customerManagement,
+      userManagement,
       invoiceManagement,
       supplierManagement,
-      billManagement,
+      payslipManagement,
       materialManagement,
       materialReceiptNoteManagement,
       roleManagement
@@ -81,10 +84,10 @@ class RoleModal extends Component {
       memberManagement,
       productManagement,
       categoryManagement,
-      customerManagement,
+      userManagement,
       invoiceManagement,
       supplierManagement,
-      billManagement,
+      payslipManagement,
       materialManagement,
       materialReceiptNoteManagement,
       roleManagement,
@@ -92,6 +95,7 @@ class RoleModal extends Component {
     };
     this.props.addRole(newRole);
 
+    this.setState({ ...initialState });
     // Close modal
     document.getElementById("triggerButton").click();
 
@@ -99,10 +103,10 @@ class RoleModal extends Component {
 
     // this.props.toggle();
   };
-  handleOnClick = () => {
-    // window.location.replace("/category?page=0&id=2");
-    // window.history.pushState("haha", null, "/category/edit");
+  onCancel = e => {
+    this.setState({ ...initialState });
   };
+
   renderCheckboxes = () => {
     return (
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -146,12 +150,12 @@ class RoleModal extends Component {
           <div>
             <label>
               <input
-                name="customerManagement"
+                name="userManagement"
                 type="checkbox"
-                checked={this.state.customerManagement}
+                checked={this.state.userManagement}
                 onChange={this.onChange}
               />
-              Customer management
+              User management
             </label>
           </div>
           <div>
@@ -181,12 +185,12 @@ class RoleModal extends Component {
           <div>
             <label>
               <input
-                name="billManagement"
+                name="payslipManagement"
                 type="checkbox"
-                checked={this.state.billManagement}
+                checked={this.state.payslipManagement}
                 onChange={this.onChange}
               />
-              Bill management
+              Payslip management
             </label>
           </div>
           <div>
@@ -228,6 +232,7 @@ class RoleModal extends Component {
     );
   };
   render() {
+    const { name } = this.state;
     return (
       <React.Fragment>
         {/* Button trigger modal */}
@@ -296,6 +301,7 @@ class RoleModal extends Component {
                     placeholder="Role name"
                     name="name"
                     onChange={this.onChange}
+                    value={name}
                   />
                 </div>
                 {this.renderCheckboxes()}
@@ -305,6 +311,7 @@ class RoleModal extends Component {
                   type="button"
                   className="btn btn-secondary"
                   data-dismiss="modal"
+                  onClick={this.onCancel}
                 >
                   Close
                 </button>

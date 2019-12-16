@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { deletePaySlip } from "../../../actions/payslipActions";
-
-const mapStateToProps = state => ({
-  payslip: state.payslip
-});
+import { pushHistory } from "../../../actions/historyActions";
 
 class PaySlipRow extends Component {
-
   convertDate = date => {
     const newDate = new Date(date);
     let year = newDate.getFullYear();
@@ -21,26 +17,26 @@ class PaySlipRow extends Component {
     return year + "-" + month + "-" + dt;
   };
   handleEdit = id => {
-    this.props.history.push(`/payslip/edit/${id}`);
+    this.props.pushHistory(`/payslip/edit/${id}`);
   };
   handleDelete = id => {
     this.props.deletePaySlip(id);
   };
 
   render() {
-    const { PaySlip, index } = this.props;
+    const { payslip, index } = this.props;
 
     return (
       <tr>
         <td>{index + 1}</td>
-        <td>{PaySlip.idMember}</td>
-        <td>{PaySlip.idSupplier}</td>
-        <td>{this.convertDate(PaySlip.createddate)}</td>
-        <td>{PaySlip.totalAmt}</td>
+        <td>{payslip.idMember}</td>
+        <td>{payslip.idSupplier}</td>
+        <td>{this.convertDate(payslip.createddate)}</td>
+        <td>{payslip.totalAmt}</td>
         <td>
           <div className="btn-group">
             <button
-              onClick={() => this.handleEdit(PaySlip._id)}
+              onClick={() => this.handleEdit(payslip._id)}
               type="button"
               className="btn btn-success"
             >
@@ -48,7 +44,7 @@ class PaySlipRow extends Component {
             </button>
 
             <button
-              onClick={() => this.handleDelete(PaySlip._id)}
+              onClick={() => this.handleDelete(payslip._id)}
               type="button"
               className="btn btn-danger"
             >
@@ -61,7 +57,4 @@ class PaySlipRow extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  { deletePaySlip }
-)(PaySlipRow);
+export default connect(null, { deletePaySlip, pushHistory })(PaySlipRow);
