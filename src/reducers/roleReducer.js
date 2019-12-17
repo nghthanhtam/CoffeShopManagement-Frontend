@@ -2,14 +2,13 @@ import {
   GET_ROLES,
   ADD_ROLE,
   DELETE_ROLE,
-  ROLES_LOADING,
   UPDATE_ROLE
 } from "../actions/types";
 
 const initialState = {
   roles: [],
 
-  loading: false
+  isLoaded: false
 };
 
 export default function(state = initialState, action) {
@@ -18,7 +17,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         roles: action.payload,
-        loading: false
+        isLoaded: true
       };
     case DELETE_ROLE:
       return {
@@ -30,11 +29,7 @@ export default function(state = initialState, action) {
         ...state,
         roles: [action.payload, ...state.roles]
       };
-    case ROLES_LOADING:
-      return {
-        ...state,
-        loading: true
-      };
+
     case UPDATE_ROLE:
       return {
         ...state

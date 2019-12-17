@@ -1,107 +1,108 @@
-import React, { Component, Fragment } from 'react'
-import CategoryModal from './CategoryModal'
-import CategoryRow from './CategoryRow'
-import { connect } from 'react-redux'
-import { getCategories } from '../../../actions/categoryActions'
-import PropTypes from 'prop-types'
-import axios from 'axios'
-import Loader from 'react-loader'
+import React, { Component, Fragment } from "react";
+import CategoryModal from "./CategoryModal";
+import CategoryRow from "./CategoryRow";
+import { connect } from "react-redux";
+import { getCategories } from "../../../actions/categoryActions";
+import PropTypes from "prop-types";
+import axios from "axios";
+import Loader from "react-loader";
 
 const mapStateToProps = state => ({
   categories: state.category.categories,
-  isLoaded: state.category.isLoaded,
-})
+  isLoaded: state.category.isLoaded
+});
 
 class Category extends Component {
   state = {
-    sort: [{ value: '5' }, { value: '10' }, { value: '20' }],
-    select: '5',
+    sort: [{ value: "5" }, { value: "10" }, { value: "20" }],
+    select: "5",
     currentPage: 1,
     pages: [],
     totalDocuments: 0,
-    query: '',
-  }
+    query: ""
+  };
 
   resetState = () => {
-    this.setState({ select: '5', currentPage: 1, query: '' })
-  }
+    this.setState({ select: "5", currentPage: 1, query: "" });
+  };
   componentDidMount() {
-    const { select, currentPage, query } = this.state
-    this.getTotalDocuments()
+    const { select, currentPage, query } = this.state;
+    this.getTotalDocuments();
 
-    this.getPages()
+    this.getPages();
 
-    this.props.getCategories(select, currentPage, query)
+    this.props.getCategories(select, currentPage, query);
   }
 
   getTotalDocuments = () => {
-    const { query } = this.state
+    const { query } = this.state;
 
-    let newQuery = ''
-    if (query === '') newQuery = 'undefined'
-    else newQuery = query
+    let newQuery = "";
+    if (query === "") newQuery = "undefined";
+    else newQuery = query;
 
     axios
       .get(
         `${process.env.REACT_APP_BACKEND_HOST}/api/category/count/${newQuery}`
       )
       .then(response => {
-        this.setState({ totalDocuments: response.data })
-        console.log(response.data)
+        this.setState({ totalDocuments: response.data });
       })
       .catch(er => {
-        console.log(er.response)
-      })
-  }
+        console.log(er.response);
+      });
+  };
 
   getPages = () => {
-    const { select, query } = this.state
-    let newQuery = ''
-    if (query === '') newQuery = 'undefined'
-    else newQuery = query
+    const { select, query } = this.state;
+    let newQuery = "";
+    if (query === "") newQuery = "undefined";
+    else newQuery = query;
 
     axios
-      .get(`/api/category/count/${newQuery}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/category/count/${newQuery}`
+      )
       .then(response => {
-        let pages = Math.floor(response.data / select)
-        let remainder = response.data % select
-        let newArray = []
-        if (remainder !== 0) pages += 1
+        let pages = Math.floor(response.data / select);
+        let remainder = response.data % select;
+        let newArray = [];
+        if (remainder !== 0) pages += 1;
 
         for (let i = 0; i < pages; i++) {
-          newArray.push({ pageNumber: i + 1 })
+          newArray.push({ pageNumber: i + 1 });
         }
 
-        this.setState({ pages: newArray })
+        this.setState({ pages: newArray });
       })
       .catch(er => {
-        console.log(er.response)
-      })
-  }
+        console.log(er.response);
+      });
+  };
 
   handleOnChange = e => {
-    console.log(typeof e.target.name + ' ' + e.target.name)
-    e.persist()
+    console.log(typeof e.target.name + " " + e.target.name);
+    e.persist();
     this.setState({ [e.target.name]: e.target.value }, () => {
-      if (e.target.name === 'query') {
+      if (e.target.name === "query") {
         this.setState({ currentPage: 1 }, () => {
-          this.rerenderPage()
-        })
+          this.rerenderPage();
+        });
       } else {
-        this.rerenderPage()
+        this.rerenderPage();
       }
-    })
-  }
+    });
+  };
 
   rerenderPage = () => {
-    const { select, currentPage, query } = this.state
-    this.props.getCategories(select, currentPage, query)
-    this.getPages()
-    this.getTotalDocuments()
-  }
+    const { select, currentPage, query } = this.state;
+    this.props.getCategories(select, currentPage, query);
+    this.getPages();
+    this.getTotalDocuments();
+  };
 
   renderCategories = () => {
-    const { categories } = this.props
+    const { categories } = this.props;
     return categories.map((eachCategory, index) => (
       <CategoryRow
         history={this.props.history}
@@ -110,23 +111,23 @@ class Category extends Component {
         index={index}
         // deleteCategory={this.props.deleteCategory}
       />
-    ))
-  }
+    ));
+  };
   handleChoosePage = e => {
     this.setState({ currentPage: e }, () => {
-      const { select, currentPage, query } = this.state
-      this.props.getCategories(select, currentPage, query)
-    })
-  }
+      const { select, currentPage, query } = this.state;
+      this.props.getCategories(select, currentPage, query);
+    });
+  };
 
   renderSelect = () => {
-    const { sort, select } = this.state
+    const { sort, select } = this.state;
     return (
       <select
         onChange={this.handleOnChange}
         name="select"
         aria-controls="example1"
-        style={{ margin: '0px 5px' }}
+        style={{ margin: "0px 5px" }}
         className="form-control input-sm"
         value={select}
       >
@@ -136,19 +137,19 @@ class Category extends Component {
           </option>
         ))}
       </select>
-    )
-  }
+    );
+  };
 
   renderPageButtons = () => {
-    const { pages, currentPage } = this.state
+    const { pages, currentPage } = this.state;
 
     return pages.map(eachButton => (
       <li
         key={eachButton.pageNumber}
         className={
           currentPage === eachButton.pageNumber
-            ? 'paginae_button active'
-            : 'paginate_button '
+            ? "paginae_button active"
+            : "paginate_button "
         }
       >
         <a
@@ -160,12 +161,12 @@ class Category extends Component {
           {eachButton.pageNumber}
         </a>
       </li>
-    ))
-  }
+    ));
+  };
 
   render() {
-    const { select, totalDocuments } = this.state
-    const { isLoaded } = this.props
+    const { select, totalDocuments } = this.state;
+    const { isLoaded } = this.props;
     return (
       <Fragment>
         {!isLoaded ? (
@@ -195,8 +196,8 @@ class Category extends Component {
                 {/* left column */}
                 <div className="col-md-12">
                   <div className="box">
-                    <div className="box-header" style={{ marginTop: '5px' }}>
-                      <div style={{ paddingLeft: '5px' }} className="col-md-8">
+                    <div className="box-header" style={{ marginTop: "5px" }}>
+                      <div style={{ paddingLeft: "5px" }} className="col-md-8">
                         <h3 className="box-title">
                           Data Table With Full Features
                         </h3>
@@ -231,12 +232,12 @@ class Category extends Component {
                                 id="example1_filter"
                                 className="dataTables_filter"
                               >
-                                <label style={{ float: 'right' }}>
+                                <label style={{ float: "right" }}>
                                   Search:
                                   <input
                                     type="search"
                                     name="query"
-                                    style={{ margin: '0px 5px' }}
+                                    style={{ margin: "0px 5px" }}
                                     className="form-control input-sm"
                                     placeholder="Find me  "
                                     aria-controls="example1"
@@ -257,11 +258,11 @@ class Category extends Component {
                             >
                               <thead>
                                 <tr>
-                                  <th style={{ width: '10%' }}>#</th>
-                                  <th style={{ width: '20%' }}>Category</th>
-                                  <th style={{ width: '20%' }}>Created date</th>
-                                  <th style={{ width: '20%' }}>Creator</th>
-                                  <th style={{ width: '30%' }}>Action</th>
+                                  <th style={{ width: "10%" }}>#</th>
+                                  <th style={{ width: "20%" }}>Category</th>
+                                  <th style={{ width: "20%" }}>Created date</th>
+                                  <th style={{ width: "20%" }}>Creator</th>
+                                  <th style={{ width: "30%" }}>Action</th>
                                 </tr>
                               </thead>
                               <tbody>{this.renderCategories()}</tbody>
@@ -295,7 +296,7 @@ class Category extends Component {
                             >
                               <ul
                                 className="pagination"
-                                style={{ float: 'right' }}
+                                style={{ float: "right" }}
                               >
                                 {this.renderPageButtons()}
                               </ul>
@@ -314,14 +315,14 @@ class Category extends Component {
           </Fragment>
         )}
       </Fragment>
-    )
+    );
   }
 }
 
 Category.propTypes = {
   getCategories: PropTypes.func.isRequired,
   categories: PropTypes.array.isRequired,
-  isLoaded: PropTypes.bool.isRequired,
-}
+  isLoaded: PropTypes.bool.isRequired
+};
 
-export default connect(mapStateToProps, { getCategories })(Category)
+export default connect(mapStateToProps, { getCategories })(Category);

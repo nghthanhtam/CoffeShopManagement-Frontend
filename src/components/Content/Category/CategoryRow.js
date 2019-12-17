@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { deleteCategory } from "../../../actions/categoryActions";
 import { pushHistory } from "../../../actions/historyActions";
 class CategoryRow extends Component {
-
   convertDate = date => {
     const newDate = new Date(date);
     let year = newDate.getFullYear();
@@ -23,19 +22,6 @@ class CategoryRow extends Component {
     this.props.pushHistory(`/category/edit/${id}`);
   };
   handleDelete = id => {
-    // console.log(id);
-    // this.setState(prevState => {
-    //   let newState = { ...prevState }
-    //   let { categories } = newState
-
-    //   categories = categories.filter(c => c.id !== id)
-
-    //   return {
-    //     ...newState,
-    //     categories
-    //   }
-    // })
-    this.props.resetState();
     this.props.deleteCategory(id);
   };
 

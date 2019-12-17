@@ -38,7 +38,7 @@ class Invoice extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/invoice/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/invoice/count/${newQuery}`)
       .then(response => {
         this.setState({ totalDocuments: response.data });
         console.log(response.data);
@@ -56,7 +56,7 @@ class Invoice extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/invoice/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/invoice/count/${newQuery}`)
       .then(response => {
         let pages = Math.floor(response.data / select);
         let remainder = response.data % select;

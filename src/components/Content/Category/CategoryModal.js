@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { addCategory } from "../../../actions/categoryActions";
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 class CategoryModal extends Component {
   state = {
@@ -13,8 +13,6 @@ class CategoryModal extends Component {
     msg: ""
   };
   onChange = e => {
-    console.log(e.target.value);
-
     const { name, value } = e.target;
     let msg = "";
 
@@ -41,14 +39,14 @@ class CategoryModal extends Component {
     };
 
     this.props.addCategory(newItem);
-
+    this.setState({ name: "" });
     // Close modal
     document.getElementById("triggerButton").click();
   };
-  handleOnClick = () => {
-    // window.location.replace("/category?page=0&id=2");
-    // window.history.pushState("haha", null, "/category/edit");
+  onCancel = e => {
+    this.setState({ name: "" });
   };
+
   render() {
     return (
       <React.Fragment>
@@ -117,6 +115,7 @@ class CategoryModal extends Component {
                     id="name"
                     placeholder="Category name"
                     name="name"
+                    value={this.state.name}
                     onChange={this.onChange}
                   />
                 </div>
@@ -126,6 +125,7 @@ class CategoryModal extends Component {
                   type="button"
                   className="btn btn-secondary"
                   data-dismiss="modal"
+                  onClick={this.onCancel}
                 >
                   Close
                 </button>

@@ -5,18 +5,18 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT_SUCCESS,
-  CLEAR_ERRORS,
+  CLEAR_ERRORS
   // REGISTER_SUCCESS,
   // REGISTER_FAIL,
   // GET_ERRORS
-} from './types'
-import { returnErrors } from './errorActions'
-import axios from 'axios'
+} from "./types";
+import { returnErrors } from "./errorActions";
+import axios from "axios";
 
 //Check token and load user
 export const loadUser = () => (dispatch, getState) => {
   //User loading
-  dispatch({ type: USER_LOADING })
+  dispatch({ type: USER_LOADING });
 
   axios
     .get(
@@ -26,27 +26,27 @@ export const loadUser = () => (dispatch, getState) => {
     .then(res =>
       dispatch({
         type: USER_LOADED,
-        payload: res.data,
+        payload: res.data
       })
     )
     .catch(er => {
-      dispatch(returnErrors(er.response.data, er.response.status))
+      dispatch(returnErrors(er.response.data, er.response.status));
       dispatch({
-        type: AUTH_ERROR,
-      })
-    })
-}
+        type: AUTH_ERROR
+      });
+    });
+};
 export const logout = () => dispatch => {
-  dispatch({ type: LOGOUT_SUCCESS })
-}
+  dispatch({ type: LOGOUT_SUCCESS });
+};
 
 export const login = user => dispatch => {
   // Headers
   const config = {
     headers: {
-      'Content-Type': 'application/json',
-    },
-  }
+      "Content-Type": "application/json"
+    }
+  };
 
   // Request body
   //   const body = JSON.stringify({ username, password });
@@ -56,36 +56,36 @@ export const login = user => dispatch => {
     .then(response => {
       dispatch({
         type: LOGIN_SUCCESS,
-        payload: response.data,
-      })
+        payload: response.data
+      });
       dispatch({
-        type: CLEAR_ERRORS,
-      })
+        type: CLEAR_ERRORS
+      });
     })
     .catch(err => {
       dispatch(
-        returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
-      )
+        returnErrors(err.response.data, err.response.status, "LOGIN_FAIL")
+      );
       return {
-        type: LOGIN_FAIL,
-      }
-    })
-}
+        type: LOGIN_FAIL
+      };
+    });
+};
 
 export const tokenConfig = getState => {
   //Get token from local storage
-  const token = getState().auth.token
+  const token = getState().auth.token;
 
   const config = {
     headers: {
-      'Content-type': 'application/json',
-    },
-  }
+      "Content-type": "application/json"
+    }
+  };
 
   //Header
   if (token) {
-    config.headers['x-auth-token'] = token
+    config.headers["x-auth-token"] = token;
   }
 
-  return config
-}
+  return config;
+};

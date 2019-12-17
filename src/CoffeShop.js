@@ -4,6 +4,15 @@ import Footer from "./components/Footer";
 import Menu from "./components/Menu";
 import Category from "./components/Content/Category/Category";
 import CategoryEdit from "./components/Content/Category/CategoryEdit";
+import Member from "./components/Content/Member/Member";
+import MemberEdit from "./components/Content/Member/MemberEdit";
+import PaySlip from "./components/Content/PaySlip/PaySlip";
+import PaySlipEdit from "./components/Content/PaySlip/PaySlipEdit";
+import Invoice from "./components/Content/OrderAndInvoices/Invoice";
+import StorageReport from "./components/Content/Report/StorageReport";
+import DailyCheck from "./components/Content/Report/DailyCheck";
+import InvoiceEdit from "./components/Content/OrderAndInvoices/InvoiceEdit";
+import OrderScreen from "./components/Content/OrderAndInvoices/OrderScreen";
 import Supplier from "./components/Content/Supplier/Supplier";
 import SupplierEdit from "./components/Content/Supplier/SupplierEdit";
 import ErrorPage from "./components/Content/ErrorPage/ErrorPage";
@@ -20,15 +29,29 @@ import Material from "./components/Content/Material/Material";
 import MaterialEdit from "./components/Content/Material/MaterialEdit";
 import User from "./components/Content/User/User";
 import UserEdit from "./components/Content/User/UserEdit";
+import { PrivateRoute } from "./components/PrivateRoute";
+import NoPermissionPage from "./components/Content/ErrorPage/NoPermissionPage";
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
   isLoading: state.auth.isLoading,
   history: state.history,
   isLoaded: state.auth.isLoaded,
-  user: state.auth.user
+  user: state.auth.user,
+  token: state.auth.token
 });
-
+const roles = {
+  category: "categoryManagement",
+  role: "roleManagement",
+  member: "memberManagement",
+  product: "productManagement",
+  user: "userManagement",
+  invoice: "invoiceManagement",
+  supplier: "supplierManagement",
+  payslip: "payslipManagement",
+  material: "materialManagement",
+  materialReceiptNote: "materialReceiptNoteManagement"
+};
 class CoffeShop extends Component {
   state = {
     firstPathname: "/"
@@ -44,6 +67,7 @@ class CoffeShop extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
   render() {
+    const { token, isAuthenticated } = this.props;
     return (
       <Fragment>
         {!this.props.isLoaded ? (
@@ -54,7 +78,7 @@ class CoffeShop extends Component {
               exact
               path="/"
               render={() => {
-                return !this.props.isAuthenticated ? (
+                return !isAuthenticated ? (
                   <Redirect to="/login" />
                 ) : (
                   <Redirect to="/home" />
@@ -66,14 +90,10 @@ class CoffeShop extends Component {
               exact
               path="/login"
               render={() => {
-                return !this.props.isAuthenticated ? (
-                  <Login />
-                ) : (
-                  <Redirect to="/home" />
-                );
+                return !isAuthenticated ? <Login /> : <Redirect to="/home" />;
               }}
             />
-            {this.props.isAuthenticated && (
+            {isAuthenticated && (
               <Fragment>
                 <Header />
                 <Menu />
@@ -86,22 +106,52 @@ class CoffeShop extends Component {
                     <Route path="/404">
                       <ErrorPage />
                     </Route>
-                    <Route exact path="/category">
-                      <Category />
+                    <Route path="/403">
+                      <NoPermissionPage />
                     </Route>
-                    <Route exact path="/role">
-                      <Role />
-                    </Route>
-                    <Route
+                    <PrivateRoute
+                      exact
+                      path="/category"
+                      component={Category}
+                      role={roles.category}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/role"
+                      component={Role}
+                      role={roles.role}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/supplier"
+                      component={Supplier}
+                      role={roles.supplier}
+                      token={token}
+                    ></PrivateRoute>
+
+                    <PrivateRoute
+                      exact
+                      path="/member"
+                      component={Member}
+                      role={roles.member}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
                       exact
                       path="/role/edit/:id"
                       component={RoleEdit}
-                    ></Route>
-                    <Route
+                      role={roles.role}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
                       exact
                       path="/category/edit/:id"
                       component={CategoryEdit}
-                    ></Route>
+                      role={roles.category}
+                      token={token}
+                    ></PrivateRoute>
                     <Route exact path="/material" component={Material}></Route>
                     <Route
                       exact
@@ -110,6 +160,65 @@ class CoffeShop extends Component {
                     />
                     <Route exact path="/user" component={User}></Route>
                     <Route exact path="/user/edit/:id" component={UserEdit} />
+
+                    <PrivateRoute
+                      exact
+                      path="/supplier/edit/:id"
+                      component={SupplierEdit}
+                      role={roles.supplier}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/member/edit/:id"
+                      component={MemberEdit}
+                      role={roles.member}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/payslip"
+                      component={PaySlip}
+                      role={roles.payslip}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/payslip/edit/:id"
+                      component={PaySlipEdit}
+                      role={roles.payslip}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/invoice"
+                      component={Invoice}
+                      role={roles.invoice}
+                      token={token}
+                    ></PrivateRoute>
+                    <PrivateRoute
+                      exact
+                      path="/invoice/edit/:id"
+                      component={InvoiceEdit}
+                      role={roles.invoice}
+                      token={token}
+                    ></PrivateRoute>
+
+                    <Route
+                      exact
+                      path="/dailycheck"
+                      component={DailyCheck}
+                    ></Route>
+                    <Route
+                      exact
+                      path="/storageReport"
+                      component={StorageReport}
+                    ></Route>
+                    <Route
+                      exact
+                      path="/orderScreen"
+                      component={OrderScreen}
+                    ></Route>
                     <Route path="*" render={() => <Redirect to="/404" />} />
                   </Switch>
                 </div>

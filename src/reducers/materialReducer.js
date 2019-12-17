@@ -1,8 +1,11 @@
 import {
   GET_MATERIALS,
+  GET_ALL_MATERIALS,
   ADD_MATERIAL,
   DELETE_MATERIAL,
-  MATERIALS_LOADING
+  MATERIALS_LOADING,
+  UPDATE_MATERIAL,
+  UPDATE_QTY_MATERIAL
 } from "../actions/types";
 
 const initialState = {
@@ -16,7 +19,13 @@ export default function(state = initialState, action) {
       return {
         ...state,
         materials: action.payload,
-        isLoaded: false
+        isLoaded: true
+      };
+    case GET_ALL_MATERIALS:
+      return {
+        ...state,
+        materials: action.payload,
+        isLoaded: true
       };
     case DELETE_MATERIAL:
       return {
@@ -31,10 +40,21 @@ export default function(state = initialState, action) {
         ...state,
         materials: [action.payload, ...state.materials]
       };
+
+    case UPDATE_MATERIAL:
+      return {
+        ...state
+      };
+
+    case UPDATE_QTY_MATERIAL:
+      return {
+        ...state
+      };
+
     case MATERIALS_LOADING:
       return {
         ...state,
-        isLoaded: false
+        isLoaded: true
       };
     default:
       return state;

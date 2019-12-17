@@ -3,41 +3,43 @@ import { connect } from "react-redux";
 import { addMember, getMembers } from "../../../actions/memberActions";
 import { addInvoice } from "../../../actions/invoiceActions";
 import { showNoti } from "../../../actions/notificationActions";
-import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import "react-notifications/lib/notifications.css";
+import {
+  NotificationContainer,
+  NotificationManager
+} from "react-notifications";
 import PropTypes from "prop-types";
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 class MemberModal extends Component {
-
   state = {
     name: "",
     phone: "",
     point: 0,
     _id: "",
     msg: "",
-    notiType: "",
+    notiType: ""
   };
 
-  componentDidMount() {
-    this.setState({ name: '', phone: '', point: '', _id: '' });
-  }
   componentDidUpdate(prevProps, prevState, snapshot) {
-
     if (prevProps.member.members !== this.props.member.members) {
       if (this.props.isLoaded === false) {
         return;
-      };
+      }
 
-      if (this.props.member.type === 'DELETE_MEMBER' || this.props.member.type === 'GET_MEMBERS') {
+      if (
+        this.props.member.type === "DELETE_MEMBER" ||
+        this.props.member.type === "GET_MEMBERS" ||
+        this.props.member.type === "GET_SEARCH_MEMBERS"
+      ) {
         return;
       }
 
       if (this.props.member.response === 200) {
-        this.setState({ notiType: 'success' });
+        this.setState({ notiType: "success" });
       } else {
-        this.setState({ notiType: 'failure' });
+        this.setState({ notiType: "failure" });
       }
     }
   }
@@ -50,7 +52,7 @@ class MemberModal extends Component {
     const isPassed = this.validatePhone(value);
     //const inputErrors = isPassed ? false : true;
 
-    if (!isPassed && name === 'phone') {
+    if (!isPassed && name === "phone") {
       msg = "Phone can only contain numbers and spaces";
     }
     this.setState({ [name]: value, msg: msg });
@@ -65,30 +67,31 @@ class MemberModal extends Component {
     const newItem = {
       name: this.state.name,
       phone: this.state.phone,
-      point: this.state.point,
+      point: 0,
       createAt: new Date(),
-      _id: mongoose.Types.ObjectId(),
+      _id: mongoose.Types.ObjectId()
     };
 
     this.props.addMember(newItem);
-
+    this.setState({ name: "", phone: "" });
 
     // Close modal
     document.getElementById("triggerButton").click();
   };
+  onCancel = e => {
+    this.setState({ name: "", phone: "" });
+  };
   createNotification = () => {
     const { notiType } = this.state;
     this.props.showNoti(notiType);
-    this.setState({ notiType: '' });
+    this.setState({ notiType: "" });
   };
 
   render() {
-    const { notiType } = this.state;
+    const { notiType, name, phone, point } = this.state;
     return (
       <Fragment>
-        {notiType !== "" ? (
-          this.createNotification()
-        ) : null}
+        {notiType !== "" ? this.createNotification() : null}
         <NotificationContainer />
 
         {/* Button trigger modal */}
@@ -119,7 +122,7 @@ class MemberModal extends Component {
                   <span>
                     <h3 className="modal-title" id="exampleModalLongTitle">
                       Add new Member
-                  </h3>
+                    </h3>
                   </span>
                   <span>
                     <button
@@ -133,7 +136,7 @@ class MemberModal extends Component {
                   </span>
                 </div>
                 <div className="modal-body">
-                  {this.state.msg != '' ? (
+                  {this.state.msg != "" ? (
                     <div className="alert alert-danger alert-dismissible">
                       {this.state.msg}
                     </div>
@@ -141,7 +144,7 @@ class MemberModal extends Component {
                   <div className="form-group">
                     <label htmlFor="recipient-name" className="col-form-label">
                       Name:
-                  </label>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -149,14 +152,14 @@ class MemberModal extends Component {
                       placeholder="Add member"
                       name="name"
                       onChange={this.onChange}
+                      value={name}
                       required
                     />
-
                   </div>
                   <div className="form-group">
                     <label htmlFor="recipient-name" className="col-form-label">
                       Phone:
-                  </label>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -164,18 +167,19 @@ class MemberModal extends Component {
                       placeholder="Add phone"
                       name="phone"
                       onChange={this.onChange}
+                      value={phone}
                       required
                     />
                   </div>
                   <div className="form-group">
                     <label htmlFor="recipient-name" className="col-form-label">
                       Point:
-                  </label>
+                    </label>
                     <input
                       type="text"
                       className="form-control"
                       id="point"
-                      defaultValue={0}
+                      value={point}
                       //placeholder="Add point"
                       name="point"
                       disabled={true}
@@ -188,35 +192,37 @@ class MemberModal extends Component {
                     type="button"
                     className="btn btn-secondary"
                     data-dismiss="modal"
+                    onClick={this.onCancel}
                   >
                     Close
-                </button>
+                  </button>
                   <button
                     type="submit"
                     //onClick={this.onSubmit}
                     className="btn btn-primary"
                   >
                     Add member
-                </button>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </form>
-
       </Fragment>
     );
   }
 }
 
 MemberModal.propTypes = {
-  showNoti: PropTypes.func.isRequired,
+  showNoti: PropTypes.func.isRequired
 };
 const mapStateToProps = state => ({
   member: state.member,
   isLoaded: state.member.isLoaded
 });
-export default connect(
-  mapStateToProps,
-  { addMember, getMembers, addInvoice, showNoti }
-)(MemberModal);
+export default connect(mapStateToProps, {
+  addMember,
+  getMembers,
+  addInvoice,
+  showNoti
+})(MemberModal);

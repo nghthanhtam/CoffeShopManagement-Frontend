@@ -1,12 +1,12 @@
 import {
-  GET_SEARCH_MEMBERS,
-  GET_MEMBERS,
-  ADD_MEMBER,
-  DELETE_MEMBER
+  GET_SEARCH_REPORTS,
+  GET_REPORTS,
+  ADD_REPORT,
+  DELETE_REPORT
 } from "../actions/types";
 
 const initialState = {
-  members: [],
+  storagereports: [],
   isLoaded: false,
   response: null,
   type: null
@@ -14,32 +14,32 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_MEMBERS:
+    case GET_REPORTS:
       return {
         ...state,
-        members: action.payload,
+        storagereports: action.payload,
         isLoaded: true,
         type: action.type
       };
-    case GET_SEARCH_MEMBERS:
+    case GET_SEARCH_REPORTS:
       return {
         ...state,
-        members: action.payload,
+        storagereports: action.payload,
         isLoaded: true,
         type: action.type
       };
-    case DELETE_MEMBER:
+    case DELETE_REPORT:
       return {
         ...state,
-        members: state.members.filter(
-          member => member._id !== action.payload._id
+        storagereports: state.storagereports.filter(
+          report => report._id !== action.payload._id
         ),
         type: action.type
       };
-    case ADD_MEMBER:
+    case ADD_REPORT:
       return {
         ...state,
-        members: [action.payload, ...state.members],
+        storagereports: [action.payload, ...state.storagereports],
         response: action.response,
         type: action.type
       };

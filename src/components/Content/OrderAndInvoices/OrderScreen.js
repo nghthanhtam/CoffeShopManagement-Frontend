@@ -45,26 +45,25 @@ class OrderScreen extends Component {
   onChangeSelectedUser = (selectedUser) => {
     this.setState({ invisibleInpUserVal: selectedUser.value });
   };
+
   componentDidUpdate(prevProps, prevState, snapshot) {
-
     let { isLoaded, member, invoice } = this.props;
-    if (prevProps.invoice.invoices !== this.props.invoice.invoices) {
 
+    if (prevProps.invoice.invoices !== this.props.invoice.invoices) {
       if (isLoaded === false) {
         return;
       };
 
       if (invoice.type === 'ADD_INVOICE') {
         if (invoice.response === 200) {
-          alert('af');
+
           this.setState({ notiType: 'success' });
           window.location.reload();
         } else {
-          alert('fali');
+          alert('fail');
           this.setState({ notiType: 'failure' });
         }
       } else { return; }
-
     }
   }
 
@@ -90,16 +89,15 @@ class OrderScreen extends Component {
 
   //load len list member
   onListMemberClick = (selectedMember) => {
-
-    // if (this.props.member.members.length !== this.state.listSelectMember.length) {
-    // }
     this.setState(state => {
       let listSelectMember = [...state.listSelectMember]
+      if (this.props.member.members.length === this.state.listSelectMember.length) return;
+      else listSelectMember = [];
       this.props.member.members.map(el => {
         listSelectMember.push({ 'value': el._id, 'label': el.name + ' - ' + el.phone })
       });
       return {
-        ...state.listSelectMember,
+        //...state.listSelectMember,
         listSelectMember
       }
     });
@@ -129,10 +127,7 @@ class OrderScreen extends Component {
       });
 
       this.setState({ total: totalTmp })
-      // return {
-      //   ...this.state.listOrder,
-      //   listOrder 
-      // }
+
       return {
         listOrder
       }
@@ -193,7 +188,6 @@ class OrderScreen extends Component {
   }
 
   onSubmit = e => {
-    console.log(this.state.listOrder);
     e.preventDefault();
     const newInvoice = {
       idMember: this.state.selectedMember.value,
@@ -226,9 +220,10 @@ class OrderScreen extends Component {
     this.getTotalDocuments();
     this.getPages();
     this.props.getProducts(select, currentPage, query);
+    //this.props.getMembers(select, currentPage, query);
     this.props.getSearchMembers('');
-
   }
+
   getTotalDocuments = () => {
     const { query } = this.state;
     let newQuery = "";
@@ -236,7 +231,7 @@ class OrderScreen extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/product/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/product/count/${newQuery}`)
       .then(response => {
         this.setState({ totalDocuments: response.data });
 
@@ -254,7 +249,7 @@ class OrderScreen extends Component {
     else newQuery = query;
 
     axios
-      .get(`/api/product/count/${newQuery}`)
+      .get(`${process.env.REACT_APP_BACKEND_HOST}/api/product/count/${newQuery}`)
       .then(response => {
         let pages = Math.floor(response.data / select);
         let remainder = response.data % select;
@@ -352,7 +347,7 @@ class OrderScreen extends Component {
     const { members } = this.props.member;
     const { isLoaded } = this.props;
     const { invisibleInpUserVal, invisibleInpMemVal, listOrder, listSelectMember, total } = this.state;
-    //alert(this.state.notiType);
+
     return (
       <Fragment>
         {!isLoaded ? (
@@ -362,7 +357,8 @@ class OrderScreen extends Component {
               {this.state.notiType !== "" ? (
                 this.createNotification()
               ) : null}
-              <NotificationContainer />
+              {this.state.notiType !== "" ? (
+                <NotificationContainer />) : null}
 
               {/* Content Header (Page header) */}
               <section className="content-header">
@@ -541,7 +537,7 @@ class OrderScreen extends Component {
                                 </div>
                               </div>
 
-                              {/* <div className="row">
+                              <div className="row">
                                 <div className="col-sm-12">
                                   <table
                                     id="example1"
@@ -571,7 +567,7 @@ class OrderScreen extends Component {
 
                                   </table>
                                 </div>
-                              </div> */}
+                              </div>
 
                             </div>
                             {/*/.col (left) */}
@@ -622,7 +618,7 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProducts, deleteProduct, getMembers, getSearchMembers, addInvoice, getInvoices, showNoti }
+  { getProducts, deleteProduct, getSearchMembers, getMembers, addInvoice, getInvoices, showNoti }
 )(OrderScreen);
 
 const menuStyle = {

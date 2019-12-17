@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 export default class Menu extends Component {
   render() {
@@ -25,82 +25,11 @@ export default class Menu extends Component {
                 </a>
               </div>
             </div>
-            {/* search form */}
-            <form action="#" method="get" className="sidebar-form">
-              <div className="input-group">
-                <input
-                  type="text"
-                  name="q"
-                  className="form-control"
-                  placeholder="Search..."
-                />
-                <span className="input-group-btn">
-                  <button
-                    type="submit"
-                    name="search"
-                    id="search-btn"
-                    className="btn btn-flat"
-                  >
-                    <i className="fa fa-search" />
-                  </button>
-                </span>
-              </div>
-            </form>
-            {/* /.search form */}
+
             {/* sidebar menu: : style can be found in sidebar.less */}
             <ul className="sidebar-menu" data-widget="tree">
               <li className="header">MAIN NAVIGATION</li>
-              <li className="active treeview menu-open">
-                <a href="fake_url">
-                  <i className="fa fa-dashboard" /> <span>Dashboard</span>
-                  <span className="pull-right-container">
-                    <i className="fa fa-angle-left pull-right" />
-                  </span>
-                </a>
-                <ul className="treeview-menu">
-                  <li>
-                    <a href="index.html">
-                      <i className="fa fa-circle-o" /> Dashboard v1
-                    </a>
-                  </li>
-                  <li className="active">
-                    <a href="index2.html">
-                      <i className="fa fa-circle-o" /> Dashboard v2
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li className="treeview">
-                <a href="fake_url">
-                  <i className="fa fa-files-o" />
-                  <span>Layout Options</span>
-                  <span className="pull-right-container">
-                    <span className="label label-primary pull-right">4</span>
-                  </span>
-                </a>
-                <ul className="treeview-menu">
-                  <li>
-                    <a href="pages/layout/top-nav.html">
-                      <i className="fa fa-circle-o" /> Top Navigation
-                    </a>
-                  </li>
-                  <li>
-                    <a href="pages/layout/boxed.html">
-                      <i className="fa fa-circle-o" /> Boxed
-                    </a>
-                  </li>
-                  <li>
-                    <a href="pages/layout/fixed.html">
-                      <i className="fa fa-circle-o" /> Fixed
-                    </a>
-                  </li>
-                  <li>
-                    <a href="pages/layout/collapsed-sidebar.html">
-                      <i className="fa fa-circle-o" /> Collapsed Sidebar
-                    </a>
-                  </li>
-                </ul>
-              </li>
+
               <li>
                 <Link to="/category">
                   <i className="fa fa-th" /> <span>Category</span>
@@ -125,9 +54,34 @@ export default class Menu extends Component {
                   </span>
                 </Link>
               </li>
+
+              <li>
+                <Link to="/supplier">
+                  <i className="fa fa-th" /> <span>Supplier</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+              </li>
               <li>
                 <Link to="/orderScreen">
                   <i className="fa fa-th" /> <span>Order</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/dailycheck">
+                  <i className="fa fa-th" /> <span>Daily Check</span>
+                  <span className="pull-right-container">
+                    <small className="label pull-right bg-green">new</small>
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/storageReport">
+                  <i className="fa fa-th" /> <span>Storage Report</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
                   </span>
@@ -143,15 +97,7 @@ export default class Menu extends Component {
               </li>
               <li>
                 <Link to="/payslip">
-                  <i className="fa fa-th" /> <span>Pay Slip</span>
-                  <span className="pull-right-container">
-                    <small className="label pull-right bg-green">new</small>
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/supplier">
-                  <i className="fa fa-th" /> <span>Supplier</span>
+                  <i className="fa fa-th" /> <span>Payslip</span>
                   <span className="pull-right-container">
                     <small className="label pull-right bg-green">new</small>
                   </span>
@@ -413,6 +359,6 @@ export default class Menu extends Component {
           {/* /.sidebar */}
         </aside>
       </div>
-    )
+    );
   }
 }

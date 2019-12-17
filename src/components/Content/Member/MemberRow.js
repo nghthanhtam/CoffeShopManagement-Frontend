@@ -3,12 +3,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { deleteMember } from "../../../actions/memberActions";
 
-const mapStateToProps = state => ({
-  member: state.member
-});
-
 class MemberRow extends Component {
-
   convertDate = date => {
     const newDate = new Date(date);
     let year = newDate.getFullYear();
@@ -28,24 +23,23 @@ class MemberRow extends Component {
     this.props.history.push(`/member/edit/${id}`);
   };
   handleDelete = id => {
-
     this.props.deleteMember(id);
   };
 
   render() {
-    const { Member, index } = this.props;
+    const { member, index } = this.props;
 
     return (
       <tr>
         <td>{index + 1}</td>
-        <td>{Member.name}</td>
-        <td>{Member.phone}</td>
-        <td>{Member.point}</td>
-        <td>{this.convertDate(Member.createAt)}</td>
+        <td>{member.name}</td>
+        <td>{member.phone}</td>
+        <td>{member.point}</td>
+        <td>{this.convertDate(member.createAt)}</td>
         <td>
           <div className="btn-group">
             <button
-              onClick={() => this.handleEdit(Member._id)}
+              onClick={() => this.handleEdit(member._id)}
               type="button"
               className="btn btn-success"
             >
@@ -53,7 +47,7 @@ class MemberRow extends Component {
             </button>
 
             <button
-              onClick={() => this.handleDelete(Member._id)}
+              onClick={() => this.handleDelete(member._id)}
               type="button"
               className="btn btn-danger"
             >
@@ -66,7 +60,4 @@ class MemberRow extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  { deleteMember }
-)(MemberRow);
+export default connect(null, { deleteMember })(MemberRow);

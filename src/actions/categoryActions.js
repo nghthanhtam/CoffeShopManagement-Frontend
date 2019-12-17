@@ -2,21 +2,20 @@ import {
   GET_CATEGORIES,
   ADD_CATEGORY,
   DELETE_CATEGORY,
-  CATEGORIES_LOADING,
-  UPDATE_CATEGORY,
-} from './types'
-import axios from 'axios'
-import { tokenConfig } from './authActions'
+  UPDATE_CATEGORY
+} from "./types";
+import axios from "axios";
+import { tokenConfig } from "./authActions";
 
-const mongoose = require('mongoose')
+import mongoose from "mongoose";
 export const getCategories = (show = 5, page = 1, query) => (
   dispatch,
   getState
 ) => {
   // dispatch(setCategoriesLoading());
-  let newQuery = ''
-  if (query === '') newQuery = 'undefined'
-  else newQuery = query
+  let newQuery = "";
+  if (query === "") newQuery = "undefined";
+  else newQuery = query;
   axios
     .get(
       `${process.env.REACT_APP_BACKEND_HOST}/api/category/${show}/${page}/${newQuery}`,
@@ -26,11 +25,11 @@ export const getCategories = (show = 5, page = 1, query) => (
     .then(response =>
       dispatch({ type: GET_CATEGORIES, payload: response.data })
     )
-    .catch(er => console.log(er.response))
-}
+    .catch(er => console.log(er.response));
+};
 
 export const deleteCategory = id => (dispatch, getState) => {
-  console.log(id)
+  console.log(id);
 
   axios
     .delete(
@@ -40,11 +39,11 @@ export const deleteCategory = id => (dispatch, getState) => {
     .then(response => {
       dispatch({
         type: DELETE_CATEGORY,
-        payload: response.data,
-      })
+        payload: response.data
+      });
     })
-    .catch(er => console.log(er.response))
-}
+    .catch(er => console.log(er.response));
+};
 
 export const addCategory = newCategory => (dispatch, getState) => {
   axios
@@ -55,22 +54,16 @@ export const addCategory = newCategory => (dispatch, getState) => {
     )
     .then(response => {
       if (newCategory._id instanceof mongoose.Types.ObjectId) {
-        newCategory._id = newCategory._id.toString()
+        newCategory._id = newCategory._id.toString();
       }
-      console.log(newCategory)
+
       dispatch({
         type: ADD_CATEGORY,
-        payload: newCategory,
-      })
+        payload: newCategory
+      });
     })
-    .catch(er => console.log(er.response))
-}
-
-export const setCategoriesLoading = () => {
-  return {
-    type: CATEGORIES_LOADING,
-  }
-}
+    .catch(er => console.log(er.response));
+};
 
 export const updateCategory = newCategory => (dispatch, getState) => {
   axios
@@ -83,10 +76,10 @@ export const updateCategory = newCategory => (dispatch, getState) => {
     .then(response => {
       dispatch({
         type: UPDATE_CATEGORY,
-        payload: response.data,
-      })
+        payload: response.data
+      });
     })
     .catch(error => {
-      console.log(error.response)
-    })
-}
+      console.log(error.response);
+    });
+};

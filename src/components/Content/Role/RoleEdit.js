@@ -11,10 +11,10 @@ class RoleEdit extends Component {
     memberManagement: false,
     productManagement: false,
     categoryManagement: false,
-    customerManagement: false,
+    userManagement: false,
     invoiceManagement: false,
     supplierManagement: false,
-    billManagement: false,
+    payslipManagement: false,
     materialManagement: false,
     materialReceiptNoteManagement: false,
     roleManagement: false
@@ -22,7 +22,10 @@ class RoleEdit extends Component {
   componentDidMount() {
     const { id } = this.props.match.params;
     axios
-      .get(`/api/role/${id}`, this.tokenConfig(this.props.auth.token))
+      .get(
+        `${process.env.REACT_APP_BACKEND_HOST}/api/role/${id}`,
+        this.tokenConfig(this.props.auth.token)
+      )
       .then(response => {
         if (response.data === null) this.props.pushHistory("/404");
         else
@@ -32,10 +35,10 @@ class RoleEdit extends Component {
             memberManagement: response.data.memberManagement,
             productManagement: response.data.productManagement,
             categoryManagement: response.data.categoryManagement,
-            customerManagement: response.data.customerManagement,
+            userManagement: response.data.userManagement,
             invoiceManagement: response.data.invoiceManagement,
             supplierManagement: response.data.supplierManagement,
-            billManagement: response.data.billManagement,
+            payslipManagement: response.data.payslipManagement,
             materialManagement: response.data.materialManagement,
             materialReceiptNoteManagement:
               response.data.materialReceiptNoteManagement,
@@ -78,10 +81,10 @@ class RoleEdit extends Component {
       memberManagement,
       productManagement,
       categoryManagement,
-      customerManagement,
+      userManagement,
       invoiceManagement,
       supplierManagement,
-      billManagement,
+      payslipManagement,
       materialManagement,
       materialReceiptNoteManagement,
       roleManagement
@@ -94,16 +97,15 @@ class RoleEdit extends Component {
       memberManagement,
       productManagement,
       categoryManagement,
-      customerManagement,
+      userManagement,
       invoiceManagement,
       supplierManagement,
-      billManagement,
+      payslipManagement,
       materialManagement,
       materialReceiptNoteManagement,
       roleManagement
     };
     this.props.updateRole(newRole);
-
     //Quay về trang chính
     this.props.history.push("/role");
   };
@@ -113,6 +115,18 @@ class RoleEdit extends Component {
   };
 
   renderCheckboxes = () => {
+    const {
+      memberManagement,
+      productManagement,
+      categoryManagement,
+      userManagement,
+      invoiceManagement,
+      supplierManagement,
+      payslipManagement,
+      materialManagement,
+      materialReceiptNoteManagement,
+      roleManagement
+    } = this.state;
     return (
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -121,7 +135,7 @@ class RoleEdit extends Component {
               <input
                 name="memberManagement"
                 type="checkbox"
-                checked={this.state.memberManagement}
+                checked={memberManagement}
                 onChange={this.handleChange}
               />
               Member management
@@ -133,7 +147,7 @@ class RoleEdit extends Component {
               <input
                 name="productManagement"
                 type="checkbox"
-                checked={this.state.productManagement}
+                checked={productManagement}
                 onChange={this.handleChange}
               />
               Product management
@@ -145,7 +159,7 @@ class RoleEdit extends Component {
               <input
                 name="categoryManagement"
                 type="checkbox"
-                checked={this.state.categoryManagement}
+                checked={categoryManagement}
                 onChange={this.handleChange}
               />
               Category management
@@ -155,12 +169,12 @@ class RoleEdit extends Component {
           <div>
             <label>
               <input
-                name="customerManagement"
+                name="userManagement"
                 type="checkbox"
-                checked={this.state.customerManagement}
+                checked={userManagement}
                 onChange={this.handleChange}
               />
-              Customer management
+              User management
             </label>
           </div>
           <div>
@@ -168,7 +182,7 @@ class RoleEdit extends Component {
               <input
                 name="invoiceManagement"
                 type="checkbox"
-                checked={this.state.invoiceManagement}
+                checked={invoiceManagement}
                 onChange={this.handleChange}
               />
               Invoice management
@@ -181,7 +195,7 @@ class RoleEdit extends Component {
               <input
                 name="supplierManagement"
                 type="checkbox"
-                checked={this.state.supplierManagement}
+                checked={supplierManagement}
                 onChange={this.handleChange}
               />
               Supplier management
@@ -190,12 +204,12 @@ class RoleEdit extends Component {
           <div>
             <label>
               <input
-                name="billManagement"
+                name="payslipManagement"
                 type="checkbox"
-                checked={this.state.billManagement}
+                checked={payslipManagement}
                 onChange={this.handleChange}
               />
-              Bill management
+              Payslip management
             </label>
           </div>
           <div>
@@ -203,7 +217,7 @@ class RoleEdit extends Component {
               <input
                 name="materialManagement"
                 type="checkbox"
-                checked={this.state.materialManagement}
+                checked={materialManagement}
                 onChange={this.handleChange}
               />
               Material management
@@ -215,7 +229,7 @@ class RoleEdit extends Component {
               <input
                 name="materialReceiptNoteManagement"
                 type="checkbox"
-                checked={this.state.materialReceiptNoteManagement}
+                checked={materialReceiptNoteManagement}
                 onChange={this.handleChange}
               />
               Material receipt note management
@@ -226,7 +240,7 @@ class RoleEdit extends Component {
               <input
                 name="roleManagement"
                 type="checkbox"
-                checked={this.state.roleManagement}
+                checked={roleManagement}
                 onChange={this.handleChange}
               />
               Role management
