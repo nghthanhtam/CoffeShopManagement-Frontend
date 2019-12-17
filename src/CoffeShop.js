@@ -10,6 +10,7 @@ import PaySlip from "./components/Content/PaySlip/PaySlip";
 import PaySlipEdit from "./components/Content/PaySlip/PaySlipEdit";
 import Invoice from "./components/Content/OrderAndInvoices/Invoice";
 import StorageReport from "./components/Content/Report/StorageReport";
+import SaleReport from "./components/Content/Report/SaleReport";
 import DailyCheck from "./components/Content/Report/DailyCheck";
 import InvoiceEdit from "./components/Content/OrderAndInvoices/InvoiceEdit";
 import OrderScreen from "./components/Content/OrderAndInvoices/OrderScreen";
@@ -220,6 +221,12 @@ class CoffeShop extends Component {
                       component={OrderScreen}
                     ></Route>
                     <Route path="*" render={() => <Redirect to="/404" />} />
+
+                    <Route
+                      exact
+                      path="/saleReport"
+                      component={SaleReport}
+                    ></Route>
                   </Switch>
                 </div>
                 <Footer />

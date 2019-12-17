@@ -18,7 +18,8 @@ export const showNoti = type => dispatch => {
     case 'warning-order':
       NotificationManager.warning('You have not ordered yet!', 'Warning', 2000, {}, true);
       break;
-    case '':
+    case 'unique-material':
+      NotificationManager.warning('This material has been chosen!', 'Warning', 2000, {}, true);
       break;
     default:
       break;

@@ -14,6 +14,7 @@ import materialReducer from "./materialReducer";
 import notificationReducer from "./notificationReducer";
 import supplierReducer from "./supplierReducer";
 import storageReportReducer from "./storageReportReducer";
+import invoicedetReducer from "./invoicedetReducer";
 
 export default combineReducers({
   category: categoryReducer,
@@ -24,6 +25,7 @@ export default combineReducers({
   member: memberReducer,
   product: productReducer,
   invoice: invoiceReducer,
+  invoicedet: invoicedetReducer,
   payslip: payslipReducer,
   material: materialReducer,
   showNoti: notificationReducer,

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { deleteInvoice } from "../../../actions/invoiceActions";
+import { deleteInvoice, updateInvoice } from "../../../actions/invoiceActions";
 
 const mapStateToProps = state => ({
   invoice: state.invoice
@@ -27,20 +27,19 @@ class InvoiceRow extends Component {
   handleEdit = id => {
     this.props.history.push(`/invoice/edit/${id}`);
   };
-  handleDelete = id => {
-    // console.log(id);
-    // this.setState(prevState => {
-    //   let newState = { ...prevState }
-    //   let { categories } = newState
 
-    //   categories = categories.filter(c => c.id !== id)
-
-    //   return {
-    //     ...newState,
-    //     categories
-    //   }
-    // })
-    this.props.deleteInvoice(id);
+  handleInactive = id => {
+    let Invoice = this.props;
+    const newInvoice = {
+      _id: Invoice._id,
+      idMember: Invoice.idMember,
+      idUser: Invoice.idUser,
+      totalAmt: Invoice.totalAmt,
+      createddate: Invoice.createddate,
+      comments: Invoice.comments,
+      status: 0
+    }
+    this.props.updateInvoice(newInvoice);
   };
 
   render() {
@@ -63,6 +62,14 @@ class InvoiceRow extends Component {
             >
               Edit
             </button>
+
+            <button
+              onClick={() => this.handleInactive(Invoice._id)}
+              type="button"
+              className="btn btn-danger"
+            >
+              Inactive
+            </button>
           </div>
         </td>
       </tr>
@@ -72,5 +79,5 @@ class InvoiceRow extends Component {
 
 export default connect(
   mapStateToProps,
-  { deleteInvoice }
+  { deleteInvoice, updateInvoice }
 )(InvoiceRow);

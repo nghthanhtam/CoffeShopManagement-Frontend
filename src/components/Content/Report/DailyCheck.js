@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { deleteMember } from "../../../actions/memberActions";
 import { updateQtyMaterial, getAllMaterials } from "../../../actions/materialActions"
 import { addStorageReport } from "../../../actions/storageReportActions"
+import { showNoti } from "../../../actions/notificationActions"
+import { NotificationContainer } from 'react-notifications';
 import PropTypes from "prop-types";
-import axios from "axios";
 import Loader from "react-loader";
 import Select from "react-select";
 
@@ -22,6 +23,32 @@ class DailyCheck extends Component {
         rows: [],
         options: [],
         index: 0,
+        notiType: "",
+    };
+
+    removeItem(index) {
+
+        this.setState(state => {
+            let rows = [...state.rows]
+            rows.splice(index, 1);
+
+            return {
+                rows
+            }
+        });
+
+        this.setState(state => {
+            let options = [...state.options];
+            options[index].disabled = false;
+            return {
+                options
+            }
+        });
+    }
+
+    createNotification = () => {
+        this.props.showNoti(this.state.notiType);
+        this.setState({ notiType: '' });
     };
 
     convertDate = date => {
@@ -47,17 +74,16 @@ class DailyCheck extends Component {
             if (this.props.material.materials.length === this.state.options.length) return;
             else options = [];
             this.props.material.materials.map(el => {
-                options.push({ 'value': el._id, 'label': el.name, 'quantityIndb': el.quantity })
+                options.push({ 'value': el._id, 'label': el.name, 'quantityIndb': el.quantity, 'disabled': false })
             });
             return {
-                //...state.options,
                 options
             }
         });
 
         this.setState(state => {
             let rows = [...state.rows];
-            rows = [...rows, { _id: this.state.index + 1, materialId: '', quantity: 0, quantitydb: 0, usedqty: 0, options: options, createAt: new Date() }];
+            rows = [...rows, { _id: this.state.index + 1, materialId: '', name: 'Select...', quantity: 0, quantitydb: 0, usedqty: 0, options: options, createAt: new Date() }];
             return {
                 ...state.rows,
                 rows
@@ -70,14 +96,6 @@ class DailyCheck extends Component {
         this.state.rows.map(el => {
             e.preventDefault();
 
-            // axios
-            //     .put(`/api/material/${el.materialId}`, { quantity: el.quantity })
-            //     .then(response => {
-            //         console.log(response.data);
-            //     })
-            //     .catch(error => {
-            //         console.log(error.response);
-            //     });
             const newMaterial = {
                 _id: el.materialId,
                 quantity: el.quantity
@@ -97,51 +115,23 @@ class DailyCheck extends Component {
 
     componentDidMount() {
         this.props.getAllMaterials('');
-        //this.props.getSearchMembers('');
     }
 
-    getTotalDocuments = () => {
-        const { query } = this.state;
-        console.log(query);
-        let newQuery = "";
-        if (query === "") newQuery = "undefined";
-        else newQuery = query;
-
-        axios
-            .get(`/api/member/count/${newQuery}`)
-            .then(response => {
-                this.setState({ totalDocuments: response.data });
-                console.log(response.data);
-            })
-            .catch(er => {
-                console.log(er.response);
-            });
-    };
-
-    getPages = () => {
-        const { select, query } = this.state;
-        let newQuery = "";
-        if (query === "") newQuery = "undefined";
-        else newQuery = query;
-
-        axios
-            .get(`/api/member/count/${newQuery}`)
-            .then(response => {
-                let pages = Math.floor(response.data / select);
-                let remainder = response.data % select;
-                let newArray = [];
-                if (remainder !== 0) pages += 1;
-
-                for (let i = 0; i < pages; i++) {
-                    newArray.push({ pageNumber: i + 1 });
+    componentDidUpdate(prevProps) {
+        let storagereport = this.props.storagereport;
+        if (prevProps.storagereport.storagereports !== this.props.storagereport.storagereports) {
+            //khi luu cai storage report cuoi cung thi moi thong bao
+            if (storagereport.storagereports[0].idMaterial === this.state.rows[0].materialId) {
+                if (this.props.storagereport.response === 200) {
+                    console.log('200')
+                    this.setState({ notiType: 'success' });
+                } else {
+                    this.setState({ notiType: 'failure' });
                 }
+            }
 
-                this.setState({ pages: newArray });
-            })
-            .catch(er => {
-                console.log(er.response);
-            });
-    };
+        }
+    }
 
     onSelect = (index, selectedMaterial) => {
         //selectedMaterial.quantity
@@ -153,10 +143,9 @@ class DailyCheck extends Component {
 
             rows.map(el => {
                 if (el._id === index + 1) {
-                    const newItem = { _id: el._id, materialId: selectedMaterial.value, quantity: 0, quantitydb: selectedMaterial.quantityIndb, usedqty: 0, options: this.state.options, createAt: new Date() };
+                    const newItem = { _id: el._id, materialId: selectedMaterial.value, name: selectedMaterial.label, quantity: 0, quantitydb: selectedMaterial.quantityIndb, usedqty: 0, options: this.state.options, createAt: new Date() };
                     rows.splice(index, 1); //xoa 1 phan tu o vi tri index
                     rows.splice(index, 0, newItem); //chen newItem vao vi tri thu index   
-
                     return false;
                 }
             });
@@ -168,14 +157,21 @@ class DailyCheck extends Component {
 
     };
 
-    // handleOnChange = e => {
-    //     this.setState({ [e.target.name]: e.target.value }, () => {
-    //         const { select, currentPage, query } = this.state;
-    //         this.props.getMembers(select, currentPage, query);
-    //         this.getPages();
-    //         this.getTotalDocuments();
-    //     });
-    // };
+    onMenuOpen = selectedMaterial => {
+        this.setState(state => {
+            let options = [...state.options];
+            options.map((el, index) => {
+                if (this.state.rows.some(r => r.materialId === el.value)) {
+
+                    options[index].disabled = true;
+                }
+                else options[index].disabled = false;
+            })
+            return {
+                options
+            }
+        });
+    }
 
     handleChoosePage = e => {
         this.setState({ currentPage: e }, () => {
@@ -213,7 +209,7 @@ class DailyCheck extends Component {
     };
 
     render() {
-        const { options } = this.state;
+        const { disabled } = this.state;
         const { isLoaded } = this.props;
 
         return (
@@ -222,6 +218,10 @@ class DailyCheck extends Component {
                     <Loader></Loader>
                 ) : (
                         <React.Fragment>
+                            {this.state.notiType !== "" ? (
+                                this.createNotification()
+                            ) : null}
+                            <NotificationContainer />
                             {/* Content Header (Page header) */}
                             <section className="content-header">
                                 <h1>
@@ -245,13 +245,6 @@ class DailyCheck extends Component {
                                     {/* left column */}
                                     <div className="col-md-12">
                                         <div className="box">
-                                            <div className="box-header" style={{ marginTop: "5px" }}>
-                                                <div style={{ paddingLeft: "5px" }} className="col-md-8">
-                                                    <h3 className="box-title">Data Table With Full Features</h3>
-                                                </div>
-
-
-                                            </div>
                                             {/* /.box-header */}
                                             <div className="box-body">
                                                 <div
@@ -282,19 +275,6 @@ class DailyCheck extends Component {
                                                                     id="example1_filter"
                                                                     className="dataTables_filter"
                                                                 >
-                                                                    <label style={{ float: "right" }}>
-                                                                        Search:
-                                                                        <input
-                                                                            type="search"
-                                                                            name="query"
-                                                                            style={{ margin: "0px 5px" }}
-                                                                            className="form-control input-sm"
-                                                                            placeholder="Find me  "
-                                                                            aria-controls="example1"
-                                                                            onChange={this.handleOnChange}
-                                                                            value={this.state.query}
-                                                                        />
-                                                                    </label>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -313,6 +293,7 @@ class DailyCheck extends Component {
                                                                         <th style={{ width: "15%" }}>Quantity</th>
                                                                         <th style={{ width: "15%" }}>Used Quantity</th>
                                                                         <th style={{ width: "15%" }}>Created date</th>
+                                                                        <th style={{ width: "5%" }}></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -320,7 +301,7 @@ class DailyCheck extends Component {
                                                                         <tr>
                                                                             <td>{index + 1}</td>
                                                                             <Select
-
+                                                                                onMenuOpen={() => this.onMenuOpen(el.materialId)}
                                                                                 onChange={(e) => this.onSelect(index, e)}
                                                                                 styles={{
                                                                                     control: (base, state) => ({
@@ -328,14 +309,17 @@ class DailyCheck extends Component {
                                                                                         borderColor: 'transparent',
                                                                                     }),
                                                                                 }}
-                                                                                border='false'
-                                                                                name='idMaterial'
-                                                                                id='idMaterial'
-                                                                                options={el.options}>
-                                                                            </Select>
+                                                                                value={{
+                                                                                    value: el.materialId,
+                                                                                    label: el.name
+                                                                                }}
+                                                                                options={el.options}
+                                                                                isOptionDisabled={el => el.disabled === true}
+                                                                            />
                                                                             <td bgcolor="#f4f4f4">{el.quantitydb}</td>
                                                                             <td onBlur={e => this.handleClick(e, index)} id="used-qty" bgcolor='#FFFFFF' style={inputField} contentEditable="true"></td>
                                                                             <td>{this.convertDate(el.createAt)}</td>
+                                                                            <td><a style={{ cursor: 'pointer' }} onClick={() => this.removeItem(index)} className="fa fa-trash-o"></a></td>
                                                                         </tr >
                                                                     ))}
                                                                 </tbody>
@@ -360,7 +344,7 @@ class DailyCheck extends Component {
                                                                 aria-live="polite"
                                                             >
                                                                 Input material quantity at the end of the day
-                                                    </div>
+                                                            </div>
                                                         </div>
                                                         <div className="col-sm-7">
                                                             <div
@@ -396,15 +380,11 @@ class DailyCheck extends Component {
 }
 
 DailyCheck.propTypes = {
-    //getSearchMembers: PropTypes.func.isRequired,
     addStorageReport: PropTypes.func.isRequired,
-    //updateMaterial: PropTypes.func.updateMaterial,
-    member: PropTypes.object.isRequired,
     storagereport: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-    //member: state.member,
     isLoaded: state.material.isLoaded,
     storagereport: state.storagereport,
     material: state.material,
@@ -412,7 +392,7 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    { deleteMember, addStorageReport, updateQtyMaterial, getAllMaterials }
+    { deleteMember, addStorageReport, updateQtyMaterial, getAllMaterials, showNoti }
 )(DailyCheck);
 
 const inputField = {

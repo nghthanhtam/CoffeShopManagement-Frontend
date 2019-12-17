@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { getInvoices, addInvoice } from "../../../actions/invoiceActions";
+import { addInvoiceDet } from "../../../actions/invoicedetActions";
 import { getSearchMembers, getMembers } from "../../../actions/memberActions";
 import {
   getProducts,
@@ -12,7 +13,8 @@ import { showNoti } from "../../../actions/notificationActions"
 import MemberModal from "../Member/MemberModal";
 import Select from 'react-select';
 import Loader from "react-loader";
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationContainer } from 'react-notifications';
+const mongoose = require("mongoose");
 
 class OrderScreen extends Component {
   constructor(props) {
@@ -58,9 +60,24 @@ class OrderScreen extends Component {
         if (invoice.response === 200) {
 
           this.setState({ notiType: 'success' });
-          window.location.reload();
+
+          this.state.listOrder.map(el => {
+            const newInvoiceDet = {
+              idInvoice: invoice.invoices[0]._id, //invoice.invoices[0]._id la id cura invoice vua dc them vao
+              idProduct: el._id,
+              price: el.price,
+              quantity: el.orderQty,
+              discount: '',
+              _id: mongoose.Types.ObjectId()
+            };
+            this.props.addInvoiceDet(newInvoiceDet);
+          })
+
+          setTimeout(function () { //Start the timer
+            window.location.reload();
+          }.bind(this), 500)
+
         } else {
-          alert('fail');
           this.setState({ notiType: 'failure' });
         }
       } else { return; }
@@ -189,13 +206,17 @@ class OrderScreen extends Component {
 
   onSubmit = e => {
     e.preventDefault();
+    let idInvoice = mongoose.Types.ObjectId();
     const newInvoice = {
       idMember: this.state.selectedMember.value,
       idUser: 'this.state.selectedUser.value',
       totalAmt: this.state.total,
       createddate: new Date(),
       comments: this.state.comments,
+      status: 1,
+      _id: idInvoice,
     };
+
     if (this.state.total === 0) {
       this.setState({ notiType: 'warning-order' });
       return;
@@ -347,7 +368,6 @@ class OrderScreen extends Component {
     const { members } = this.props.member;
     const { isLoaded } = this.props;
     const { invisibleInpUserVal, invisibleInpMemVal, listOrder, listSelectMember, total } = this.state;
-
     return (
       <Fragment>
         {!isLoaded ? (
@@ -357,8 +377,7 @@ class OrderScreen extends Component {
               {this.state.notiType !== "" ? (
                 this.createNotification()
               ) : null}
-              {this.state.notiType !== "" ? (
-                <NotificationContainer />) : null}
+              <NotificationContainer />
 
               {/* Content Header (Page header) */}
               <section className="content-header">
@@ -607,6 +626,7 @@ OrderScreen.propTypes = {
   getSearchMembers: PropTypes.func.isRequired,
   member: PropTypes.object.isRequired,
   addInvoice: PropTypes.func.isRequired,
+  addInvoiceDet: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -618,7 +638,7 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getProducts, deleteProduct, getSearchMembers, getMembers, addInvoice, getInvoices, showNoti }
+  { getProducts, deleteProduct, getSearchMembers, getMembers, addInvoice, addInvoiceDet, getInvoices, showNoti }
 )(OrderScreen);
 
 const menuStyle = {
