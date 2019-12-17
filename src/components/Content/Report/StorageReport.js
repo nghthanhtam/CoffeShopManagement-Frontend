@@ -1,14 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import {
-    getSearchMembers
-} from "../../../actions/memberActions";
+import { getAllMaterials } from "../../../actions/materialActions";
 import { getSearchStorageReports } from "../../../actions/storageReportActions";
 import Select from 'react-select';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import DateTimePicker from 'react-datetime-picker';
-import moment from 'moment';
-
 
 class StorageReport extends Component {
 
@@ -25,23 +21,22 @@ class StorageReport extends Component {
 
     componentDidMount() {
         this.props.getSearchStorageReports('');
-        this.props.getSearchMembers('');
+        this.props.getAllMaterials('');
     }
+
+    convertDate = date => {
+        const newDate = new Date(date);
+        let year = newDate.getFullYear();
+        let month = newDate.getMonth() + 1;
+        let dt = newDate.getDate();
+
+        dt = dt < 10 ? `0${dt}` : dt;
+        month = month < 10 ? `0${month}` : month;
+        return dt + "/" + month;
+    };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const { idMaterial, startdate, enddate } = this.state;
-        // if (this.props.storagereport.storagereports.length !== this.state.data.length) {
-
-        //     this.setState(state => {
-        //         let data = [...state.data]
-        //         this.props.storagereport.storagereports.map(el => {
-        //             data.push({ 'name': el.idMaterial, 'pv': 500, 'amt': 2400 })
-        //         });
-        //         return {
-        //             data
-        //         }
-        //     });
-        // }
 
         if (prevState.idMaterial !== idMaterial ||
             prevState.startdate !== startdate ||
@@ -53,15 +48,31 @@ class StorageReport extends Component {
 
             this.setState(state => {
                 let data = [];
-                this.props.storagereport.storagereports.map(el => {
-                    let createddate = new Date(el.createddate.toString());
+                for (let i = 0; i < 7; i++) {
+                    data.push({ 'idMaterial': '', 'quantity': 0, 'name': '', 'amt': 2400 });
+                }
+                this.props.storagereport.storagereports.map((el, index) => {
+                    let createddate = new Date(el.createddate);
+                    console.log('crearedate:' + createddate);
+                    console.log('enddate: ' + enddate);
 
-                    if (createddate.getDate() >= startdate.getDate() && createddate.getDate() <= enddate.getDate()
-                        && createddate.getMonth() >= startdate.getMonth() && createddate.getMonth() <= enddate.getMonth()
-                        && createddate.getFullYear() >= startdate.getFullYear() && createddate.getFullYear() <= enddate.getFullYear()) {
-
-                        data.push({ 'name': el.createddate, 'quantity': 500, 'amt': 2400 })
+                    if (el.idMaterial === idMaterial) {
+                        if ((createddate > startdate && createddate < enddate) ||
+                            (createddate.toDateString() == startdate.toDateString() ||
+                                createddate.toDateString() == enddate.toDateString())) {
+                            // const obj = data.find(i => i.idMaterial = el.idMaterial);
+                            // if (obj) {
+                            //     data[data.indexOf(obj)]["name"] = createddate;
+                            //     data[data.indexOf(obj)]["quantity"] = el.quantity
+                            // }
+                            // else {
+                            data[index]["quantity"] = el.quantity;
+                            data[index]["name"] = this.convertDate(createddate);
+                            //}
+                            //data.push({ 'name': el.createddate, 'quantity': el.quantity, 'amt': 2400 })
+                        }
                     }
+
                 });
 
                 return {
@@ -73,23 +84,24 @@ class StorageReport extends Component {
 
 
     onMenuOpen = () => {
-        const { members } = this.props.member;
+        const { materials } = this.props.material;
         this.setState(state => {
             let options = [...state.options]
-            if (members.length === options) return;
+            if (materials.length === options) return;
             else options = [];
 
-            members.map(el => {
+            materials.map(el => {
                 options.push({ 'value': el._id, 'label': el.name })
             });
+            console.log(materials)
             return {
                 options
             }
         });
     };
 
-    onChangeSelectedMaterial = selectedMember => {
-        this.setState({ idMaterial: selectedMember.value })
+    onChangeSelectedMaterial = selectedMaterial => {
+        this.setState({ idMaterial: selectedMaterial.value })
     }
     onStartDateChange = date => {
         this.setState({ startdate: date });
@@ -122,8 +134,8 @@ class StorageReport extends Component {
                                     <div className="box-body">
                                         <strong> Material</strong>
                                         <Select
-                                            name='idMember'
-                                            id='idMember'
+                                            name='idMaterial'
+                                            id='idMaterial'
                                             onMenuOpen={this.onMenuOpen}
                                             onChange={this.onChangeSelectedMaterial}
                                             isSearchable={true}
@@ -155,14 +167,25 @@ class StorageReport extends Component {
                                     </div>
                                     <br />
                                     {/* /.box-body */}
-                                    <BarChart fill="#8884d8" width={200} height={350} data={this.state.data}>
+                                    <BarChart fill="#8884d8" width={500} height={350} data={this.state.data}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis dataKey="name" />
                                         <YAxis />
                                         <Tooltip />
                                         <Legend />
-                                        <Bar dataKey="quantity" fill="#8884d8" />
+                                        <Bar dataKey="quantity" fill="#8884d8" barSize={30} />
                                     </BarChart>
+                                    <br />
+                                    <div className="col-sm-5">
+                                        <div
+                                            className="dataTables_info"
+                                            id="example1_info"
+                                            role="status"
+                                            aria-live="polite"
+                                        >
+                                            Chart only shows quantity in 7 latest days
+                                        </div>
+                                    </div>
                                 </div>
                                 {/* /.row */}
                             </div>
@@ -178,14 +201,14 @@ class StorageReport extends Component {
 }
 
 const mapStateToProps = state => ({
-    isLoaded: state.member.isLoaded,
-    member: state.member,
+    isLoaded: state.material.isLoaded,
+    material: state.material,
     storagereport: state.storagereport,
 });
 
 export default connect(
     mapStateToProps,
-    { getSearchMembers, getSearchStorageReports }
+    { getAllMaterials, getSearchStorageReports }
 )(StorageReport);
 
 const menuStyle = {

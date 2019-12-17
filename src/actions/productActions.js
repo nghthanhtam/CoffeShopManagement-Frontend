@@ -6,7 +6,7 @@ import {
   PRODUCTS_LOADING,
 } from './types'
 import axios from 'axios'
-import { log } from 'util'
+
 
 export const getProducts = (show = 5, page = 1, query) => dispatch => {
   let newQuery = ''

@@ -1,8 +1,10 @@
 import {
   GET_INVOICES,
   ADD_INVOICE,
+  UPDATE_INVOICE,
   DELETE_INVOICE,
-  INVOICES_LOADING
+  INVOICES_LOADING,
+  GET_ALL_INVOICES
 } from "../actions/types";
 
 const initialState = {
@@ -21,6 +23,14 @@ export default function (state = initialState, action) {
         isLoaded: true,
         type: action.type,
       };
+
+    case GET_ALL_INVOICES:
+      return {
+        ...state,
+        invoices: action.payload,
+        isLoaded: true
+      };
+
     case DELETE_INVOICE:
       return {
         ...state,
@@ -35,6 +45,12 @@ export default function (state = initialState, action) {
         type: action.type,
         response: action.response,
       };
+
+    case UPDATE_INVOICE:
+      return {
+        ...state
+      };
+
     case INVOICES_LOADING:
       return {
         ...state,
