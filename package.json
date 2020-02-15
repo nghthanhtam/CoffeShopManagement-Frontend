@@ -28,7 +28,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "yarn": "^1.21.1"
+    "yarn": "^1.22.0"
   },
   "extends": [
     "airbnb",
